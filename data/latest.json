@@ -1,6 +1,6 @@
 {
   "report_date": "14 March 2026",
-  "uploaded_at": "14 Mar 2026, 6:05 pm",
+  "uploaded_at": "14 Mar 2026, 6:18 pm",
   "agents": [
     {
       "name": "Jeevan J",
@@ -12,21 +12,21 @@
       "TB": "00:32:11",
       "LB": "00:00:00",
       "RRB": "00:19:39",
-      "PD": "03:48:18",
-      "OUTBOUND": "00:49:37"
+      "PD": "04:08:46",
+      "OUTBOUND": "00:49:39"
     },
     {
       "name": "Prema",
       "agent_id": "Prema",
       "process": "TN",
-      "total_calls": 103,
-      "connected": 19,
-      "not_connected": 84,
+      "total_calls": 107,
+      "connected": 21,
+      "not_connected": 86,
       "TB": "00:28:36",
       "LB": "00:30:23",
       "RRB": "00:05:21",
       "PD": "01:13:23",
-      "OUTBOUND": "01:36:00"
+      "OUTBOUND": "01:38:07"
     },
     {
       "name": "Joe_Christy",
@@ -77,47 +77,47 @@
       "TB": "00:33:58",
       "LB": "00:33:15",
       "RRB": "00:23:20",
-      "PD": "03:20:44",
+      "PD": "03:42:13",
       "OUTBOUND": "00:17:18"
     },
     {
       "name": "Nithya K",
       "agent_id": "Nithya_K",
       "process": "TN",
-      "total_calls": 144,
+      "total_calls": 146,
       "connected": 29,
-      "not_connected": 115,
+      "not_connected": 117,
       "TB": "00:30:00",
       "LB": "00:30:22",
       "RRB": "00:08:16",
-      "PD": "01:18:30",
-      "OUTBOUND": "00:03:04"
+      "PD": "01:29:32",
+      "OUTBOUND": "00:03:06"
     },
     {
       "name": "Vigneswara Mohanraj",
       "agent_id": "V_Mohanraj",
       "process": "TN",
-      "total_calls": 123,
+      "total_calls": 127,
       "connected": 35,
-      "not_connected": 88,
+      "not_connected": 92,
       "TB": "00:30:28",
       "LB": "00:33:02",
       "RRB": "00:12:55",
-      "PD": "02:35:13",
-      "OUTBOUND": "00:12:07"
+      "PD": "02:49:35",
+      "OUTBOUND": "00:12:14"
     },
     {
       "name": "Stefy Sony A S",
       "agent_id": "Stefy_Sony",
       "process": "KL",
-      "total_calls": 172,
-      "connected": 45,
-      "not_connected": 127,
+      "total_calls": 178,
+      "connected": 46,
+      "not_connected": 132,
       "TB": "00:23:02",
       "LB": "00:31:02",
       "RRB": "00:04:59",
       "PD": "00:52:52",
-      "OUTBOUND": "01:31:45"
+      "OUTBOUND": "01:33:52"
     },
     {
       "name": "Steena A S",
@@ -129,34 +129,34 @@
       "TB": "00:16:10",
       "LB": "00:30:04",
       "RRB": "00:15:07",
-      "PD": "05:44:42",
+      "PD": "06:02:23",
       "OUTBOUND": "00:27:39"
     },
     {
       "name": "Lourd_Gladies_A",
       "agent_id": "Lourd_Gladies_A",
       "process": "TN",
-      "total_calls": 103,
-      "connected": 25,
-      "not_connected": 78,
+      "total_calls": 109,
+      "connected": 26,
+      "not_connected": 83,
       "TB": "00:29:08",
       "LB": "00:30:54",
       "RRB": "00:04:49",
       "PD": "00:44:34",
-      "OUTBOUND": "00:56:06"
+      "OUTBOUND": "00:56:21"
     },
     {
       "name": "Sandhya_J_P",
       "agent_id": "Sandhya_J_P",
       "process": "TN",
-      "total_calls": 87,
-      "connected": 20,
-      "not_connected": 67,
+      "total_calls": 91,
+      "connected": 21,
+      "not_connected": 70,
       "TB": "00:29:35",
       "LB": "00:29:20",
       "RRB": "00:15:02",
-      "PD": "02:08:51",
-      "OUTBOUND": "03:49:57"
+      "PD": "02:11:57",
+      "OUTBOUND": "04:00:04"
     },
     {
       "name": "Arun",
@@ -182,7 +182,7 @@
       "LB": "00:28:52",
       "RRB": "00:08:58",
       "PD": "00:32:22",
-      "OUTBOUND": "02:03:57"
+      "OUTBOUND": "02:03:58"
     }
   ]
 }
