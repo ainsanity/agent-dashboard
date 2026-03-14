@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Upload — Agent Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--blue:#58a6ff;--green:#3fb950;--red:#f85149;--amber:#e3a117;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:40px 20px;}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:32px;width:100%;max-width:520px;}
+.card-title{font-size:18px;font-weight:700;color:#fff;margin-bottom:4px;display:flex;align-items:center;gap:10px;}
+.card-sub{font-size:12px;color:var(--muted);margin-bottom:28px;}
+
+.field{margin-bottom:18px;}
+.label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px;display:block;}
+input[type=text],input[type=password]{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;padding:9px 12px;border-radius:6px;outline:none;transition:border .15s;}
+input[type=text]:focus,input[type=password]:focus{border-color:var(--blue);}
+input::placeholder{color:var(--muted);}
+
+.drop-zone{border:2px dashed var(--border);border-radius:8px;padding:36px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface2);}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--blue);background:#0d1f3c;}
+.drop-zone .icon{font-size:36px;margin-bottom:8px;}
+.drop-zone .main{font-size:13px;font-weight:600;color:var(--text);}
+.drop-zone .hint{font-size:11px;color:var(--muted);margin-top:4px;}
+input[type=file]{display:none;}
+
+.file-selected{background:var(--surface2);border:1px solid var(--green);border-radius:6px;padding:10px 14px;display:none;align-items:center;gap:10px;margin-top:10px;}
+.file-name{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--green);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.file-clear{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:0 4px;}
+.file-clear:hover{color:var(--red);}
+
+.preview-box{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px;margin-top:12px;display:none;max-height:160px;overflow-y:auto;}
+.preview-box table{width:100%;border-collapse:collapse;}
+.preview-box th{font-size:10px;color:var(--muted);text-align:left;padding:3px 6px;border-bottom:1px solid var(--border);}
+.preview-box td{font-size:11px;padding:3px 6px;font-family:'IBM Plex Mono',monospace;border-bottom:1px solid #1c2330;color:var(--text);}
+.preview-title{font-size:11px;font-weight:600;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.7px;}
+
+.btn{width:100%;padding:12px;border-radius:8px;border:none;font-family:'IBM Plex Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;margin-top:8px;}
+.btn-primary{background:var(--blue);color:#000;}
+.btn-primary:hover{background:#79b8ff;}
+.btn-primary:disabled{background:#1f3a5f;color:var(--muted);cursor:not-allowed;}
+.btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);margin-top:10px;}
+.btn-secondary:hover{border-color:var(--blue);color:var(--blue);}
+
+.progress{display:none;margin-top:16px;}
+.progress-bar-bg{background:var(--surface2);border-radius:4px;height:6px;overflow:hidden;}
+.progress-bar{height:6px;border-radius:4px;background:var(--blue);width:0;transition:width .4s;}
+.progress-text{font-size:11px;color:var(--muted);margin-top:6px;font-family:'IBM Plex Mono',monospace;}
+
+.status{display:none;padding:14px 16px;border-radius:8px;margin-top:16px;font-size:13px;font-weight:600;border:1px solid;}
+.status.success{background:#1a3d1a;border-color:var(--green);color:var(--green);}
+.status.error{background:#3d1a1a;border-color:var(--red);color:var(--red);}
+
+.divider{border:none;border-top:1px solid var(--border);margin:24px 0;}
+.link-box{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:10px;}
+.link-url{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--blue);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.copy-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:4px;cursor:pointer;font-size:11px;font-family:'IBM Plex Sans',sans-serif;transition:all .15s;}
+.copy-btn:hover{border-color:var(--blue);color:var(--blue);}
+
+.step-list{list-style:none;counter-reset:steps;}
+.step-list li{counter-increment:steps;padding:8px 0 8px 32px;font-size:12px;color:var(--muted);position:relative;border-bottom:1px solid var(--border);}
+.step-list li:last-child{border-bottom:none;}
+.step-list li::before{content:counter(steps);position:absolute;left:0;top:8px;width:20px;height:20px;background:var(--surface2);border:1px solid var(--border);border-radius:50%;text-align:center;line-height:20px;font-size:10px;font-weight:700;color:var(--blue);}
+.step-list li strong{color:var(--text);}
+
+.warn-box{background:#3d2800;border:1px solid var(--amber);border-radius:6px;padding:12px 14px;font-size:12px;color:var(--amber);line-height:1.6;margin-bottom:20px;}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-title">🔐 Admin Upload Panel</div>
+  <div class="card-sub">Upload the daily agent CSV report — dashboard updates automatically for all viewers.</div>
+
+  <div class="warn-box">
+    ⚠ <strong>First-time setup:</strong> You need a GitHub Personal Access Token with <code>repo</code> scope. <a href="https://github.com/settings/tokens/new" target="_blank" style="color:var(--amber)">Generate one here →</a>
+  </div>
+
+  <!-- GITHUB TOKEN -->
+  <div class="field">
+    <label class="label">GitHub Personal Access Token</label>
+    <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" oninput="saveToken()">
+    <div style="font-size:10px;color:var(--muted);margin-top:4px;">Stored locally in your browser only. Never shared.</div>
+  </div>
+
+  <!-- REPO -->
+  <div class="field">
+    <label class="label">GitHub Repo (owner/repo)</label>
+    <input type="text" id="ghRepo" placeholder="your-username/agent-dashboard" oninput="saveRepo()">
+  </div>
+
+  <!-- FILE DROP -->
+  <div class="field">
+    <label class="label">Upload CSV / Excel Report</label>
+    <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()" ondragover="handleDrag(event,true)" ondragleave="handleDrag(event,false)" ondrop="handleDrop(event)">
+      <div class="icon">📂</div>
+      <div class="main">Click to browse or drag & drop</div>
+      <div class="hint">Supports .csv and .xlsx files</div>
+    </div>
+    <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" onchange="handleFile(this.files[0])">
+    <div class="file-selected" id="fileSelected">
+      <span>📄</span>
+      <span class="file-name" id="fileName">–</span>
+      <button class="file-clear" onclick="clearFile()">✕</button>
+    </div>
+    <div class="preview-box" id="previewBox">
+      <div class="preview-title">Preview (first 5 rows)</div>
+      <div id="previewContent"></div>
+    </div>
+  </div>
+
+  <!-- UPLOAD BTN -->
+  <button class="btn btn-primary" id="uploadBtn" onclick="uploadData()" disabled>⬆ Upload & Publish Dashboard</button>
+
+  <!-- PROGRESS -->
+  <div class="progress" id="progressBar">
+    <div class="progress-bar-bg"><div class="progress-bar" id="bar"></div></div>
+    <div class="progress-text" id="progressText">Preparing…</div>
+  </div>
+
+  <!-- STATUS -->
+  <div class="status" id="statusBox"></div>
+
+  <hr class="divider">
+
+  <!-- DASHBOARD LINK -->
+  <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:8px;">📎 Share Dashboard Link</div>
+  <div class="link-box">
+    <span class="link-url" id="dashLink">Set your repo above to generate link</span>
+    <button class="copy-btn" onclick="copyLink()">Copy</button>
+  </div>
+  <a href="#" id="openDash" target="_blank" style="display:none;">
+    <button class="btn btn-secondary" style="margin-top:10px;">🔗 Open Dashboard →</button>
+  </a>
+</div>
+
+<!-- SETUP GUIDE -->
+<div class="card" style="margin-top:20px;">
+  <div class="card-title" style="font-size:15px;">🛠 One-Time Setup Guide</div>
+  <div class="card-sub">Do this once — then just upload CSV daily.</div>
+  <ol class="step-list">
+    <li><strong>Create a GitHub account</strong> at github.com if you don't have one.</li>
+    <li><strong>Create a new repository</strong> named <code style="color:var(--blue)">agent-dashboard</code> — set it to <strong>Public</strong>.</li>
+    <li><strong>Upload the project files</strong> from this folder to your repo (drag & drop on GitHub).</li>
+    <li><strong>Enable GitHub Pages:</strong> Go to repo → Settings → Pages → Source: <em>Deploy from branch → main → / (root)</em>.</li>
+    <li><strong>Generate a token:</strong> GitHub → Settings → Developer settings → Personal access tokens → New token → check <code>repo</code> scope.</li>
+    <li><strong>Paste your token above</strong> and enter your repo name, then upload your first CSV.</li>
+    <li><strong>Share the dashboard link</strong> with your associates — it auto-updates on every upload!</li>
+  </ol>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+// Restore saved settings
+window.onload = () => {
+  const tok = localStorage.getItem('gh_token');
+  const repo = localStorage.getItem('gh_repo');
+  if(tok) document.getElementById('ghToken').value = tok;
+  if(repo){ document.getElementById('ghRepo').value = repo; updateDashLink(); }
+};
+function saveToken(){ localStorage.setItem('gh_token', document.getElementById('ghToken').value); }
+function saveRepo(){ localStorage.setItem('gh_repo', document.getElementById('ghRepo').value); updateDashLink(); }
+function updateDashLink(){
+  const repo = document.getElementById('ghRepo').value.trim();
+  if(!repo || !repo.includes('/')){ document.getElementById('dashLink').textContent='Set your repo above to generate link'; return; }
+  const [owner, name] = repo.split('/');
+  const url = `https://${owner}.github.io/${name}/`;
+  document.getElementById('dashLink').textContent = url;
+  const a = document.getElementById('openDash');
+  a.href = url; a.style.display = 'block';
+}
+function copyLink(){
+  const t = document.getElementById('dashLink').textContent;
+  if(t.startsWith('Set')) return;
+  navigator.clipboard.writeText(t).then(()=>{ showStatus('✓ Link copied to clipboard!','success'); setTimeout(()=>hideStatus(),2000); });
+}
+
+// DRAG & DROP
+function handleDrag(e,on){ e.preventDefault(); document.getElementById('dropZone').classList.toggle('dragover',on); }
+function handleDrop(e){ e.preventDefault(); handleDrag(e,false); const f=e.dataTransfer.files[0]; if(f) handleFile(f); }
+
+let parsedAgents = null;
+
+function handleFile(file){
+  if(!file) return;
+  document.getElementById('fileName').textContent = file.name;
+  document.getElementById('fileSelected').style.display = 'flex';
+  if(file.name.endsWith('.csv')){
+    const reader = new FileReader();
+    reader.onload = e => parseCSV(e.target.result);
+    reader.readAsText(file);
+  } else {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const wb = XLSX.read(e.target.result, {type:'binary'});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const csv = XLSX.utils.sheet_to_csv(ws);
+      parseCSV(csv);
+    };
+    reader.readAsBinaryString(file);
+  }
+}
+
+function parseCSV(text){
+  const lines = text.trim().split('\n');
+  // Skip SQL line if present, find header row
+  let headerIdx = 0;
+  for(let i=0;i<Math.min(5,lines.length);i++){
+    if(lines[i].includes('FULL NAME') || lines[i].includes('AGENT ID')){ headerIdx=i; break; }
+  }
+  const parse = line => {
+    const r=[]; let cur='',inQ=false;
+    for(const c of line){ if(c==='"'){inQ=!inQ;}else if(c===','&&!inQ){r.push(cur.trim());cur='';}else{cur+=c;} }
+    r.push(cur.trim()); return r.map(v=>v.replace(/^"|"$/g,''));
+  };
+  const headers = parse(lines[headerIdx]);
+  const agents = [];
+  for(let i=headerIdx+1;i<lines.length;i++){
+    const row = parse(lines[i]);
+    if(row.length < 5) continue;
+    const dateDay = row[3]||'';
+    if(dateDay==='TOTAL'||dateDay==='GRAND TOTAL'||dateDay==='DATE DAY') continue;
+    const total = parseInt(row[4])||0;
+    if(total===0) continue; // skip inactive
+    let name = row[0]||'';
+    if(/^\d+$/.test(name.trim())) name = (row[1]||'').replace(/_/g,' ');
+    const proc = (row[2]||'').includes('Kerala') ? 'KL' : 'TN';
+    agents.push({
+      name: name.trim(), agent_id: row[1]||'', process: proc,
+      total_calls: total,
+      connected: parseInt(row[8])||0,
+      not_connected: parseInt(row[9])||0,
+      TB: row[15]||'00:00:00', LB: row[16]||'00:00:00',
+      RRB: row[18]||'00:00:00', PD: row[19]||'00:00:00',
+      OUTBOUND: row[23]||'00:00:00'
+    });
+  }
+  parsedAgents = agents;
+  showPreview(agents);
+  document.getElementById('uploadBtn').disabled = false;
+}
+
+function showPreview(agents){
+  const box = document.getElementById('previewBox');
+  const content = document.getElementById('previewContent');
+  const sample = agents.slice(0,5);
+  if(!sample.length){ box.style.display='none'; return; }
+  box.style.display='block';
+  content.innerHTML=`<table>
+    <thead><tr><th>Name</th><th>Process</th><th>Calls</th><th>TB</th><th>PD</th></tr></thead>
+    <tbody>${sample.map(a=>`<tr><td>${a.name}</td><td>${a.process}</td><td>${a.total_calls}</td><td>${a.TB}</td><td>${a.PD}</td></tr>`).join('')}</tbody>
+  </table><div style="font-size:10px;color:var(--muted);margin-top:6px;">… and ${agents.length-5} more active agents (inactive excluded)</div>`;
+}
+
+function clearFile(){
+  document.getElementById('fileInput').value='';
+  document.getElementById('fileSelected').style.display='none';
+  document.getElementById('previewBox').style.display='none';
+  document.getElementById('uploadBtn').disabled=true;
+  parsedAgents=null;
+}
+
+function setProgress(pct, text){
+  document.getElementById('progressBar').style.display='block';
+  document.getElementById('bar').style.width=pct+'%';
+  document.getElementById('progressText').textContent=text;
+}
+
+function showStatus(msg, type){
+  const box=document.getElementById('statusBox');
+  box.textContent=msg; box.className=`status ${type}`; box.style.display='block';
+}
+function hideStatus(){ document.getElementById('statusBox').style.display='none'; }
+
+async function uploadData(){
+  const token = document.getElementById('ghToken').value.trim();
+  const repoFull = document.getElementById('ghRepo').value.trim();
+  if(!token){ showStatus('❌ Please enter your GitHub token.','error'); return; }
+  if(!repoFull||!repoFull.includes('/')){ showStatus('❌ Please enter repo as username/repo-name.','error'); return; }
+  if(!parsedAgents||!parsedAgents.length){ showStatus('❌ No valid data parsed from file.','error'); return; }
+
+  const [owner, repo] = repoFull.split('/');
+  const btn = document.getElementById('uploadBtn');
+  btn.disabled = true;
+  hideStatus();
+
+  // Build payload
+  const now = new Date();
+  const uploadedAt = now.toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'});
+  const reportDate = parsedAgents[0] ? now.toLocaleDateString('en-IN',{dateStyle:'long'}) : '–';
+  const toSec=t=>{if(!t||t==='00:00:00')return 0;const p=t.split(':').map(Number);return p[0]*3600+p[1]*60+(p[2]||0);};
+  const getFlags=a=>{const tb=toSec(a.TB),lb=toSec(a.LB),rrb=toSec(a.RRB),pd=toSec(a.PD),ob=toSec(a.OUTBOUND);return(tb>1800?1:0)+(lb>1800?1:0)+(rrb>600?1:0)+(pd>=7200?1:0)+(ob>0&&pd>0&&ob>=pd?1:0)+(a.total_calls<150?1:0);};
+  const totalFlags = parsedAgents.reduce((s,a)=>s+getFlags(a),0);
+  const totalCalls = parsedAgents.reduce((s,a)=>s+a.total_calls,0);
+
+  const latestData = { report_date: reportDate, uploaded_at: uploadedAt, agents: parsedAgents };
+
+  const headers = { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' };
+  const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents`;
+
+  try {
+    // Step 1: Upload latest.json
+    setProgress(20, 'Step 1/3 — Checking existing data file…');
+    let sha = null;
+    try {
+      const check = await fetch(`${apiBase}/data/latest.json`, {headers});
+      if(check.ok){ const j=await check.json(); sha=j.sha; }
+    } catch(e){}
+
+    setProgress(40, 'Step 2/3 — Uploading data to GitHub…');
+    const body = {
+      message: `Update dashboard data — ${uploadedAt}`,
+      content: btoa(unescape(encodeURIComponent(JSON.stringify(latestData, null, 2)))),
+      ...(sha && {sha})
+    };
+    const res = await fetch(`${apiBase}/data/latest.json`, {method:'PUT', headers, body: JSON.stringify(body)});
+    if(!res.ok){ const e=await res.json(); throw new Error(e.message||'Upload failed'); }
+
+    // Step 2: Update history.json
+    setProgress(65, 'Step 3/3 — Updating snapshot history…');
+    let history = [];
+    let histSha = null;
+    try {
+      const hcheck = await fetch(`${apiBase}/data/history.json`, {headers});
+      if(hcheck.ok){ const hj=await hcheck.json(); histSha=hj.sha; history=JSON.parse(atob(hj.content.replace(/\n/g,''))); }
+    } catch(e){}
+    history.push({ uploaded_at: uploadedAt, report_date: reportDate, total_calls: totalCalls, total_flags: totalFlags });
+    if(history.length > 30) history = history.slice(-30); // keep last 30
+
+    const hbody = {
+      message: `Update history — ${uploadedAt}`,
+      content: btoa(unescape(encodeURIComponent(JSON.stringify(history, null, 2)))),
+      ...(histSha && {sha: histSha})
+    };
+    await fetch(`${apiBase}/data/history.json`, {method:'PUT', headers, body: JSON.stringify(hbody)});
+
+    setProgress(100, 'Done!');
+    const dashUrl = `https://${owner}.github.io/${repo}/`;
+    showStatus(`✅ Dashboard updated successfully! Associates can view it at: ${dashUrl}`, 'success');
+    clearFile();
+    setTimeout(()=>setProgress(0,''),3000);
+
+  } catch(err){
+    setProgress(0,'');
+    showStatus(`❌ Error: ${err.message}`, 'error');
+  }
+  btn.disabled = false;
+}
+</script>
+</body>
+</html>
