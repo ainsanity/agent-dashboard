@@ -35,6 +35,26 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 .race-view-btn{background:#0f3460;border:1px solid #1d4ed8;color:#93c5fd;padding:5px 14px;border-radius:20px;cursor:pointer;font-size:11px;font-weight:600;font-family:'Inter',sans-serif;transition:all .15s;}
 .race-view-btn:hover{background:#1d3a6e;color:#fff;}
 .active-race-btn{background:#1d6ae5 !important;color:#fff !important;border-color:#3b82f6 !important;}
+.race-lob-btn{background:#0a1628;border:1px solid #1e3a5f;color:#64748b;padding:4px 12px;border-radius:20px;cursor:pointer;font-size:11px;font-weight:600;font-family:'Inter',sans-serif;transition:all .15s;user-select:none;}
+.race-lob-btn:hover{border-color:#3b82f6;color:#93c5fd;}
+.race-lob-active{background:#1a3360 !important;border-color:#3b82f6 !important;color:#93c5fd !important;}
+.race-tooltip{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);background:#0a0e1a;border:1px solid #334155;border-radius:10px;padding:10px 12px;min-width:200px;max-width:260px;z-index:99999;pointer-events:none;opacity:0;transition:opacity .18s;box-shadow:0 8px 24px rgba(0,0,0,.5);}
+.race-tooltip.show{opacity:1;}
+.race-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#334155;}
+.tt-name{font-size:12px;font-weight:700;color:#fff;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid #1e293b;}
+.tt-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:2px 0;font-size:11px;}
+.tt-label{color:#94a3b8;}
+.tt-val{font-family:monospace;font-weight:600;font-size:11px;}
+.tt-val.good{color:#4ade80;}
+.tt-val.bad{color:#f87171;}
+.tt-val.warn{color:#fbbf24;}
+.tt-reason{margin-top:6px;padding-top:6px;border-top:1px solid #1e293b;}
+.tt-reason-title{font-size:10px;font-weight:700;color:#f87171;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;}
+.tt-tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:3px;margin:2px 2px 0 0;font-weight:600;}
+.tt-tag.red{background:#3d1a1a;color:#f87171;border:1px solid #7f1d1d;}
+.tt-tag.amber{background:#3d2800;color:#fbbf24;border:1px solid #78350f;}
+.tt-tag.green{background:#14532d;color:#4ade80;border:1px solid #166534;}
+.race-car-group{position:relative;}
 
 /* TIME CONTEXT BAR */
 .time-bar{background:var(--blue-bg);border-bottom:1px solid var(--blue-border);padding:7px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
@@ -220,7 +240,11 @@ td.div-l{border-left:1px solid #e9ecef;}
       </div>
     </div>
     <div style="padding:0 20px;" id="raceTracks"></div>
-    <div style="display:flex;gap:8px;padding:12px 20px 18px;border-top:1px solid #0f3460;margin-top:10px;align-items:center;">
+    <div style="padding:10px 20px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <span style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap;">Filter LOB:</span>
+      <div id="raceLobFilters" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+    </div>
+    <div style="display:flex;gap:8px;padding:10px 20px 18px;border-top:1px solid #0f3460;margin-top:10px;align-items:center;flex-wrap:wrap;">
       <button onclick="setRaceView('top5',this)" id="raceBtn5" class="race-view-btn active-race-btn">Top 5</button>
       <button onclick="setRaceView('top10',this)" id="raceBtn10" class="race-view-btn">Top 10</button>
       <button onclick="setRaceView('all',this)" id="raceBtnAll" class="race-view-btn">All Agents</button>
@@ -629,11 +653,37 @@ function buildRace(data){
     const pct=Math.min((a.total_calls/Math.max(maxCalls,target))*80,80);
     const connRate=a.total_calls>0?Math.round(a.connected/a.total_calls*100):0;
     const medal=i<3?MEDALS[i]:`<span style="font-size:11px;color:#475569">${i+1}</span>`;
+    const f=getFlags(a);
+    // Build tooltip content
+    const issues=[];
+    if(f.calls) issues.push(`<span class="tt-tag red">📞 Calls: ${a.total_calls}/${getCallTarget()} target</span>`);
+    if(f.connFlag) issues.push(`<span class="tt-tag red">📡 Conn: ${connRate}% (min 50%)</span>`);
+    if(f.talkLow) issues.push(`<span class="tt-tag red">🎙 Talk: ${fmtT(a.talk_time)} (min 3h)</span>`);
+    if(f.TB) issues.push(`<span class="tt-tag amber">☕ TB: ${fmtT(a.TB)} exceeded</span>`);
+    if(f.LB) issues.push(`<span class="tt-tag amber">🍽 LB: ${fmtT(a.LB)} (max 30m)</span>`);
+    if(f.RRB) issues.push(`<span class="tt-tag amber">⏱ RRB: ${fmtT(a.RRB)} (max 10m)</span>`);
+    if(f.PD) issues.push(`<span class="tt-tag amber">💬 PD: ${fmtT(a.PD)} (max 2h)</span>`);
+    if(f.OB) issues.push(`<span class="tt-tag amber">📤 Outbound ≥ PD time</span>`);
+    if(f.idleHigh) issues.push(`<span class="tt-tag amber">💤 Idle: ${fmtT(a.idle_time)} (high)</span>`);
+    const issueHtml = issues.length
+      ? `<div class="tt-reason"><div class="tt-reason-title">⚠ Issues Found</div>${issues.join('')}</div>`
+      : `<div class="tt-reason"><div class="tt-reason-title" style="color:#4ade80">✓ All Good!</div><span class="tt-tag green">On track — keep it up!</span></div>`;
+    const tooltip = `<div class="race-tooltip" id="tt${i}">
+      <div class="tt-name">${a.name}</div>
+      <div class="tt-row"><span class="tt-label">Calls today</span><span class="tt-val ${f.calls?'bad':'good'}">${a.total_calls} / ${getCallTarget()}</span></div>
+      <div class="tt-row"><span class="tt-label">Connection rate</span><span class="tt-val ${f.connFlag?'bad':'good'}">${connRate}%</span></div>
+      <div class="tt-row"><span class="tt-label">Talk time</span><span class="tt-val ${f.talkLow?'bad':'good'}">${fmtT(a.talk_time)}</span></div>
+      <div class="tt-row"><span class="tt-label">Break time</span><span class="tt-val ${f.breaksHigh?'warn':'good'}">${fmtT(a.break_time)}</span></div>
+      ${issueHtml}
+    </div>`;
     return `<div class="race-track">
       <div class="race-track-line"></div>
       <div class="race-track-fill" id="rfill${i}" style="background:${color};width:0%"></div>
       <div class="race-rank">${medal}</div>
-      <div class="race-car-group" id="rcar${i}" style="left:8%">
+      <div class="race-car-group" id="rcar${i}" style="left:8%"
+        onmouseenter="document.getElementById('tt${i}').classList.add('show')"
+        onmouseleave="document.getElementById('tt${i}').classList.remove('show')">
+        ${tooltip}
         ${carSVG(color)}
         <div>
           <div style="font-size:11px;font-weight:600;color:#fff;white-space:nowrap;">${a.name.split(' ')[0]}</div>
@@ -666,13 +716,55 @@ function buildRace(data){
   if(wcEl) wcEl.textContent=winner.total_calls;
 }
 
+let RACE_LOBS = new Set(['ALL']);
+
 function openRace(){
   const modal=document.getElementById('raceModal');
   modal.style.display='flex';
   document.body.style.overflow='hidden';
-  buildRace(ALL_DATA);
+  buildRaceLobFilters();
+  buildRace(getRaceFiltered());
   const note=document.getElementById('raceTargetNote');
   if(note) note.textContent='🏁 Finish line = '+getCallTarget()+' calls (current target)';
+}
+
+function buildRaceLobFilters(){
+  const procs=[...new Set(ALL_DATA.map(a=>a.process_full||a.process))].sort();
+  const bar=document.getElementById('raceLobFilters');
+  if(!bar) return;
+  bar.innerHTML=`<button class="race-lob-btn race-lob-active" data-lob="ALL" onclick="toggleRaceLob('ALL',this)">All LOBs</button>`
+    +procs.map(p=>`<button class="race-lob-btn" data-lob="${p}" onclick="toggleRaceLob('${p}',this)">${p.replace('TMF_','TMF ')}</button>`).join('');
+  RACE_LOBS=new Set(['ALL']);
+}
+
+function toggleRaceLob(lob, btn){
+  if(lob==='ALL'){
+    RACE_LOBS=new Set(['ALL']);
+    document.querySelectorAll('.race-lob-btn').forEach(b=>{
+      b.classList.toggle('race-lob-active', b.dataset.lob==='ALL');
+    });
+  } else {
+    RACE_LOBS.delete('ALL');
+    document.querySelector('.race-lob-btn[data-lob="ALL"]').classList.remove('race-lob-active');
+    if(RACE_LOBS.has(lob)){
+      RACE_LOBS.delete(lob); btn.classList.remove('race-lob-active');
+      if(RACE_LOBS.size===0){
+        RACE_LOBS=new Set(['ALL']);
+        document.querySelector('.race-lob-btn[data-lob="ALL"]').classList.add('race-lob-active');
+      }
+    } else {
+      RACE_LOBS.add(lob); btn.classList.add('race-lob-active');
+    }
+  }
+  buildRace(getRaceFiltered());
+}
+
+function getRaceFiltered(){
+  if(RACE_LOBS.has('ALL')) return ALL_DATA;
+  return ALL_DATA.filter(a=>{
+    const pf=a.process_full||a.process||'';
+    return RACE_LOBS.has(pf)||RACE_LOBS.has(a.process);
+  });
 }
 function closeRace(){
   document.getElementById('raceModal').style.display='none';
@@ -682,12 +774,9 @@ document.getElementById('raceModal').addEventListener('click',function(e){if(e.t
 
 function setRaceView(v,btn){
   RACE_VIEW=v;
-  ['raceBtn5','raceBtn10','raceBtnAll'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el){el.style.background='#0f3460';el.style.color='#93c5fd';}
-  });
-  if(btn){btn.style.background='#1d6ae5';btn.style.color='#fff';}
-  buildRace(ALL_DATA);
+  document.querySelectorAll('.race-view-btn').forEach(b=>b.classList.remove('active-race-btn'));
+  if(btn) btn.classList.add('active-race-btn');
+  buildRace(getRaceFiltered());
 }
 
 // Update time every minute
