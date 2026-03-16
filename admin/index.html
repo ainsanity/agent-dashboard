@@ -228,15 +228,38 @@ function parseCSV(text){
     let name = row[0]||'';
     if(/^\d+$/.test(name.trim())) name = (row[1]||'').replace(/_/g,' ');
     const proc = (row[2]||'').includes('Kerala') ? 'KL' : 'TN';
-    agents.push({
-      name: name.trim(), agent_id: row[1]||'', process: proc,
-      total_calls: total,
-      connected: parseInt(row[8])||0,
-      not_connected: parseInt(row[9])||0,
-      TB: row[15]||'00:00:00', LB: row[16]||'00:00:00',
-      RRB: row[18]||'00:00:00', PD: row[19]||'00:00:00',
-      OUTBOUND: row[23]||'00:00:00'
-    });
+    // Support both old format (no login cols) and new format (with login cols)
+    const hasLoginCols = headers.length >= 32 || (row.length >= 32);
+    const offset = hasLoginCols ? 8 : 0; // new format has 8 extra login cols
+    if(hasLoginCols){
+      agents.push({
+        name: name.trim(), agent_id: row[1]||'', process: proc,
+        process_full: row[2]||'',
+        total_calls: total,
+        connected: parseInt(row[8])||0,
+        not_connected: parseInt(row[9])||0,
+        logged_in: row[14]||'00:00:00',
+        idle_time: row[15]||'00:00:00',
+        talk_time: row[16]||'00:00:00',
+        break_time: row[21]||'00:00:00',
+        TB: row[23]||'00:00:00', LB: row[24]||'00:00:00',
+        RRB: row[26]||'00:00:00', PD: row[27]||'00:00:00',
+        OUTBOUND: row[31]||'00:00:00'
+      });
+    } else {
+      agents.push({
+        name: name.trim(), agent_id: row[1]||'', process: proc,
+        process_full: row[2]||'',
+        total_calls: total,
+        connected: parseInt(row[8])||0,
+        not_connected: parseInt(row[9])||0,
+        logged_in: '00:00:00', idle_time: '00:00:00',
+        talk_time: '00:00:00', break_time: '00:00:00',
+        TB: row[15]||'00:00:00', LB: row[16]||'00:00:00',
+        RRB: row[18]||'00:00:00', PD: row[19]||'00:00:00',
+        OUTBOUND: row[23]||'00:00:00'
+      });
+    }
   }
   parsedAgents = agents;
   showPreview(agents);
