@@ -6,429 +6,468 @@
 <title>Agent Performance Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
+:root{
   --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
   --text:#e6edf3;--muted:#8b949e;
-  --blue:#58a6ff;--green:#3fb950;--red:#f85149;--amber:#e3a117;
-  --red-bg:#3d1a1a;--green-bg:#1a3d1a;--amber-bg:#3d2800;
+  --blue:#58a6ff;--green:#3fb950;--red:#f85149;--amber:#e3a117;--purple:#bc8cff;
+  --red-bg:#3d1a1a;--green-bg:#1a3d1a;--amber-bg:#3d2800;--purple-bg:#2d1f45;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;min-height:100vh;}
 
 /* HEADER */
-.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-.hdr-left h1{font-size:16px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px;}
-.hdr-left .sub{font-size:11px;color:var(--muted);margin-top:2px;font-family:'IBM Plex Mono',monospace;}
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.hdr h1{font-size:16px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px;}
 .hdr-right{display:flex;align-items:center;gap:10px;}
-.badge{font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid var(--border);color:var(--muted);background:var(--surface2);font-family:'IBM Plex Mono',monospace;}
-.badge.live{border-color:#238636;color:var(--green);background:#1a3d1a;animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.6;}}
+.updated-badge{font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid var(--border);color:var(--muted);background:var(--surface2);font-family:'IBM Plex Mono',monospace;}
 .refresh-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-family:'IBM Plex Sans',sans-serif;transition:all .15s;}
 .refresh-btn:hover{border-color:var(--blue);color:var(--blue);}
 
-/* LOADING */
-#loadingState{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px;}
-.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.load-text{color:var(--muted);font-size:13px;}
-
-/* ERROR */
-#errorState{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:12px;}
-.err-icon{font-size:48px;}
-.err-msg{color:var(--muted);font-size:14px;text-align:center;max-width:400px;line-height:1.6;}
+/* ALERT BANNER */
+.alert-banner{display:none;background:#2d0f0f;border-bottom:2px solid var(--red);padding:10px 24px;}
+.alert-banner.show{display:block;}
+.alert-banner-inner{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.alert-title{font-size:12px;font-weight:700;color:var(--red);white-space:nowrap;}
+.alert-pills{display:flex;gap:6px;flex-wrap:wrap;}
+.alert-pill{font-size:11px;background:var(--red-bg);border:1px solid var(--red);color:var(--red);padding:3px 10px;border-radius:20px;font-family:'IBM Plex Mono',monospace;display:flex;align-items:center;gap:5px;}
+.alert-pill.amber{background:var(--amber-bg);border-color:var(--amber);color:var(--amber);}
 
 /* KPI */
-.kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border);}
-.kpi{background:var(--surface);padding:14px 18px;}
-.kpi .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:600;margin-bottom:5px;}
-.kpi .val{font-size:22px;font-weight:700;font-family:'IBM Plex Mono',monospace;}
-.kpi .sub{font-size:10px;color:var(--muted);margin-top:3px;}
-.val.blue{color:var(--blue);}.val.green{color:var(--green);}.val.red{color:var(--red);}.val.white{color:#fff;}
+.kpi-row{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border);}
+.kpi{background:var(--surface);padding:12px 16px;}
+.kpi .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:600;margin-bottom:4px;}
+.kpi .val{font-size:20px;font-weight:700;font-family:'IBM Plex Mono',monospace;}
+.kpi .sub{font-size:10px;color:var(--muted);margin-top:2px;}
+.val.blue{color:var(--blue);}.val.green{color:var(--green);}.val.red{color:var(--red);}.val.white{color:#fff;}.val.amber{color:var(--amber);}.val.purple{color:var(--purple);}
 
-/* INFO BAR */
-.info-bar{background:var(--surface2);border-bottom:1px solid var(--border);padding:8px 28px;display:flex;gap:20px;align-items:center;font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
-.info-bar span{display:flex;align-items:center;gap:6px;}
-.dot{width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;}
-
-/* TABS */
-.tabs{display:flex;padding:0 28px;background:var(--surface);border-bottom:1px solid var(--border);}
-.tab{padding:11px 20px;background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .15s;}
-.tab:hover{color:var(--text);}
-.tab.tn-active{color:var(--blue);border-bottom-color:var(--blue);}
-.tab.kl-active{color:var(--green);border-bottom-color:var(--green);}
-.tcnt{font-size:10px;padding:1px 7px;border-radius:10px;font-family:'IBM Plex Mono',monospace;}
-.tn-active .tcnt{background:#1a3360;color:var(--blue);}
-.kl-active .tcnt{background:var(--green-bg);color:var(--green);}
-.tab:not(.tn-active):not(.kl-active) .tcnt{background:var(--surface2);color:var(--muted);}
+/* FILTERS BAR */
+.filters-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.filter-label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.7px;}
+.filter-group{display:flex;gap:4px;flex-wrap:wrap;}
+.filter-btn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:20px;cursor:pointer;font-size:12px;font-family:'IBM Plex Sans',sans-serif;transition:all .15s;}
+.filter-btn:hover{border-color:var(--blue);color:var(--blue);}
+.filter-btn.active{background:#1a3360;border-color:var(--blue);color:var(--blue);font-weight:600;}
+.filter-btn.active-kl{background:var(--green-bg);border-color:var(--green);color:var(--green);font-weight:600;}
+.search{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:12px;padding:6px 12px;border-radius:20px;width:200px;outline:none;transition:border .15s;margin-left:auto;}
+.search:focus{border-color:var(--blue);}
+.search::placeholder{color:var(--muted);}
+.flag-filter{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer;padding:5px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);transition:all .15s;}
+.flag-filter:hover{border-color:var(--red);color:var(--red);}
+.flag-filter.active{background:var(--red-bg);border-color:var(--red);color:var(--red);}
+.cnt-lbl{font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace;margin-left:4px;}
 
 /* CONTENT */
-.content{padding:20px 28px;}
-.panel{display:none;}.panel.active{display:block;}
+.content{padding:18px 24px;}
 
-/* SECTION */
-.sec{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:18px 0 10px;display:flex;align-items:center;gap:10px;}
-.sec::after{content:'';flex:1;height:1px;background:var(--border);}
-
-/* TOP CARDS */
-.top-row{display:flex;gap:10px;margin-bottom:4px;flex-wrap:wrap;}
-.top-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:12px;flex:1;min-width:160px;}
-.medal{font-size:22px;}
-.top-name{font-weight:700;font-size:13px;color:#fff;}
-.top-calls{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:700;}
-.top-sub{font-size:10px;color:var(--muted);margin-top:2px;}
-
-/* FLAGS */
-.flag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px;}
+/* FLAG SUMMARY */
+.flag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
 .chip{font-size:11px;font-weight:600;padding:5px 12px;border-radius:4px;font-family:'IBM Plex Mono',monospace;border:1px solid;}
 .chip.bad{background:var(--red-bg);border-color:var(--red);color:var(--red);}
 .chip.ok{background:var(--green-bg);border-color:var(--green);color:var(--green);}
 .chip.warn{background:var(--amber-bg);border-color:var(--amber);color:var(--amber);}
+.chip.info{background:var(--purple-bg);border-color:var(--purple);color:var(--purple);}
 
-/* SEARCH */
-.search-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
-.search{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:12px;padding:7px 12px;border-radius:6px;width:220px;outline:none;transition:border .15s;}
-.search:focus{border-color:var(--blue);}
-.search::placeholder{color:var(--muted);}
-.cnt-lbl{font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+/* ALERTS SECTION */
+.alerts-section{background:var(--red-bg);border:1px solid var(--red);border-radius:8px;padding:14px 16px;margin-bottom:16px;display:none;}
+.alerts-section.show{display:block;}
+.alerts-sec-title{font-size:12px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.alerts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;}
+.alert-card{background:#1a0a0a;border:1px solid #5a2020;border-radius:6px;padding:10px 12px;}
+.alert-agent{font-weight:700;font-size:12px;color:#fff;margin-bottom:4px;}
+.alert-reasons{display:flex;gap:4px;flex-wrap:wrap;}
+.alert-tag{font-size:10px;padding:2px 7px;border-radius:3px;font-family:'IBM Plex Mono',monospace;font-weight:600;}
+.alert-tag.prod{background:#3d1a1a;color:var(--red);border:1px solid #5a2020;}
+.alert-tag.break{background:var(--amber-bg);color:var(--amber);border:1px solid #7a5200;}
 
-/* LEGEND */
-.legend{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:12px;}
-.leg-title{font-size:11px;color:var(--muted);font-weight:600;}
-.leg{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);}
-.leg-dot{width:10px;height:10px;border-radius:2px;}
-.leg-dot.r{background:var(--red-bg);border:1px solid var(--red);}
-.leg-dot.g{background:var(--green-bg);border:1px solid var(--green);}
-.leg-dot.a{background:var(--amber-bg);border:1px solid var(--amber);}
+/* SECTION TITLE */
+.sec{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:0 0 10px;display:flex;align-items:center;gap:10px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--border);}
 
 /* TABLE */
 .tbl-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:8px;background:var(--surface);}
-table{width:100%;border-collapse:collapse;min-width:860px;}
+table{width:100%;border-collapse:collapse;min-width:1100px;}
 thead tr{background:var(--surface2);}
-th{padding:9px 12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap;}
+th{padding:8px 10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap;text-align:center;}
+th.left{text-align:left;}
 tbody tr{border-bottom:1px solid #1c2330;transition:background .1s;}
 tbody tr:hover{background:#1a2133;}
 tbody tr:last-child{border-bottom:none;}
-td{padding:8px 12px;font-size:12px;white-space:nowrap;}
-td.rank{color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:11px;width:40px;text-align:center;}
-td.name{font-weight:600;color:#fff;min-width:160px;}
-td.calls{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;text-align:right;}
+tbody tr.prod-alert{background:#1a0808;}
+tbody tr.prod-alert:hover{background:#220a0a;}
+td{padding:7px 10px;font-size:12px;white-space:nowrap;text-align:center;}
+td.left{text-align:left;}
+
+/* rank */
+td.rank{color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:11px;width:36px;}
+/* name */
+td.name-cell{font-weight:600;color:#fff;min-width:150px;text-align:left;}
+/* process tag */
+.proc-tag{font-size:10px;padding:2px 7px;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-weight:600;display:inline-block;}
+.proc-tn{background:#1a3360;color:var(--blue);}
+.proc-kl{background:var(--green-bg);color:var(--green);}
+/* calls */
+td.calls{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;}
 td.calls.red{color:var(--red);background:var(--red-bg);}
 td.calls.grn{color:var(--green);}
-td.brk{font-family:'IBM Plex Mono',monospace;font-size:11px;text-align:center;border-left:1px solid #1c2330;}
-td.brk.red{background:var(--red-bg);color:var(--red);font-weight:700;}
-td.brk.ok{color:var(--muted);}
-td.brk.warn{background:var(--amber-bg);color:var(--amber);font-weight:700;}
+/* time cells */
+td.tc{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+td.tc.red{background:var(--red-bg);color:var(--red);font-weight:700;}
+td.tc.ok{color:var(--muted);}
+td.tc.warn{background:var(--amber-bg);color:var(--amber);font-weight:700;}
+td.tc.talk{color:var(--purple);}
+td.tc.talk.low{color:var(--red);background:var(--red-bg);font-weight:700;}
+td.tc.idle-hi{color:var(--amber);background:var(--amber-bg);font-weight:700;}
+/* conn */
 .conn{color:var(--green);font-family:'IBM Plex Mono',monospace;font-size:11px;}
 .nconn{color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:11px;}
-.ob-badge{display:inline-block;font-size:9px;background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber);border-radius:3px;padding:1px 4px;margin-left:4px;font-family:'IBM Plex Mono',monospace;vertical-align:middle;}
+/* badge */
+.prod-badge{display:inline-block;font-size:9px;background:var(--red-bg);color:var(--red);border:1px solid var(--red);border-radius:3px;padding:1px 5px;margin-left:5px;font-family:'IBM Plex Mono',monospace;vertical-align:middle;}
+.ob-badge{display:inline-block;font-size:9px;background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber);border-radius:3px;padding:1px 5px;margin-left:4px;font-family:'IBM Plex Mono',monospace;vertical-align:middle;}
 
-/* SNAPSHOT HISTORY */
-.snap-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:8px;}
-.snap-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;cursor:pointer;transition:border-color .15s;}
-.snap-card:hover{border-color:var(--blue);}
-.snap-time{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--blue);font-weight:600;}
-.snap-meta{font-size:11px;color:var(--muted);margin-top:4px;}
-.snap-stats{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
-.snap-stat{font-size:10px;padding:2px 7px;border-radius:3px;font-family:'IBM Plex Mono',monospace;}
-.snap-stat.calls{background:#1a3360;color:var(--blue);}
-.snap-stat.flags{background:var(--red-bg);color:var(--red);}
+/* LEGEND */
+.legend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:10px;}
+.leg-title{font-size:11px;color:var(--muted);font-weight:600;}
+.leg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);}
+.leg-dot{width:9px;height:9px;border-radius:2px;}
+.leg-dot.r{background:var(--red-bg);border:1px solid var(--red);}
+.leg-dot.a{background:var(--amber-bg);border:1px solid var(--amber);}
+.leg-dot.p{background:var(--purple-bg);border:1px solid var(--purple);}
 
-/* EMPTY */
-.empty{text-align:center;padding:40px;color:var(--muted);font-size:13px;}
+/* loading/error */
+#loadingState{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px;}
+.spinner{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.load-text{color:var(--muted);font-size:13px;}
+#errorState{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:12px;}
 
-@media(max-width:768px){.kpi-row{grid-template-columns:repeat(3,1fr);}.hdr{flex-direction:column;gap:8px;align-items:flex-start;}}
+/* divider in thead */
+th.div-l{border-left:1px solid var(--border);}
+td.div-l{border-left:1px solid #1c2330;}
+
+/* col group headers */
+.col-group{background:#111827;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#444d58;border-bottom:1px solid var(--border);}
+
+@media(max-width:900px){.kpi-row{grid-template-columns:repeat(4,1fr);}}
 </style>
 </head>
 <body>
 
 <!-- HEADER -->
 <div class="hdr">
-  <div class="hdr-left">
+  <div>
     <h1>📊 Agent Performance Dashboard</h1>
-    <div class="sub" id="lastUpdated">Loading data…</div>
   </div>
   <div class="hdr-right">
-    <span class="badge live">● LIVE</span>
-    <span class="badge" id="reportDate">–</span>
+    <span class="updated-badge" id="updatedBadge">Loading…</span>
     <button class="refresh-btn" onclick="loadData()">↻ Refresh</button>
   </div>
 </div>
 
-<!-- LOADING -->
+<!-- ALERT BANNER -->
+<div class="alert-banner" id="alertBanner">
+  <div class="alert-banner-inner">
+    <span class="alert-title">🚨 PRODUCTIVITY ALERTS:</span>
+    <div class="alert-pills" id="alertPills"></div>
+  </div>
+</div>
+
+<!-- LOADING / ERROR -->
 <div id="loadingState">
   <div class="spinner"></div>
   <div class="load-text">Loading latest data…</div>
 </div>
-
-<!-- ERROR -->
-<div id="errorState" style="display:none;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:12px;">
-  <div style="font-size:48px;">📭</div>
-  <div style="color:var(--muted);font-size:14px;text-align:center;max-width:400px;line-height:1.6;">
-    No data uploaded yet.<br>Ask your admin to upload the daily report CSV.
-  </div>
+<div id="errorState">
+  <div style="font-size:40px">📭</div>
+  <div style="color:var(--muted);text-align:center;line-height:1.7">No data uploaded yet.<br>Ask your admin to upload the daily CSV report.</div>
 </div>
 
-<!-- MAIN DASHBOARD -->
-<div id="mainDash" style="display:none;">
-  <!-- KPI -->
+<!-- MAIN -->
+<div id="mainDash" style="display:none">
+
+  <!-- KPI STRIP -->
   <div class="kpi-row" id="kpiRow"></div>
 
-  <!-- INFO BAR -->
-  <div class="info-bar">
-    <span><span class="dot"></span> Live data</span>
-    <span id="infoDate">–</span>
-    <span id="infoAgents">–</span>
-    <span id="infoUploaded">–</span>
-  </div>
-
-  <!-- TABS -->
-  <div class="tabs">
-    <button class="tab tn-active" onclick="switchTab('TN')" id="tabTN">🔵 TMF Tamilnadu <span class="tcnt" id="cntTN">–</span></button>
-    <button class="tab" onclick="switchTab('KL')" id="tabKL">🟢 TMF Kerala <span class="tcnt" id="cntKL">–</span></button>
-    <button class="tab" onclick="switchTab('HIST')" id="tabHIST" style="margin-left:auto;">🕓 Snapshot History <span class="tcnt" id="cntHIST">–</span></button>
+  <!-- FILTERS -->
+  <div class="filters-bar">
+    <span class="filter-label">Process:</span>
+    <div class="filter-group" id="processFilters"></div>
+    <div class="flag-filter" id="flagFilterBtn" onclick="toggleFlagFilter()">⚠ Flagged only</div>
+    <input class="search" type="text" placeholder="🔍 Search agent…" id="searchBox" oninput="applyFilters()">
+    <span class="cnt-lbl" id="shownCount"></span>
   </div>
 
   <div class="content">
-    <!-- TN -->
-    <div class="panel active" id="panelTN">
-      <div id="topTN"></div>
-      <div id="flagsTN"></div>
-      <div class="sec">Agent Performance — Tamilnadu</div>
-      <div class="legend">
-        <span class="leg-title">Legend:</span>
-        <span class="leg"><span class="leg-dot r"></span>Threshold breached</span>
-        <span class="leg"><span class="leg-dot g"></span>Within limit</span>
-        <span class="leg"><span class="leg-dot a"></span>Outbound ≥ PD</span>
-      </div>
-      <div class="search-row">
-        <input class="search" type="text" placeholder="🔍 Search agent…" oninput="filterTable('TN',this.value)">
-        <span class="cnt-lbl" id="shownTN"></span>
-      </div>
-      <div class="tbl-wrap"><table id="tableTN">
-        <thead><tr>
-          <th style="text-align:center">#</th><th>Agent Name</th>
-          <th style="text-align:right">Total Calls</th>
-          <th style="text-align:center">Connected</th><th style="text-align:center">Not Conn.</th>
-          <th style="text-align:center;border-left:1px solid var(--border)">TB<br><span style="font-size:9px;font-weight:400;color:#555">max 30m</span></th>
-          <th style="text-align:center">LB<br><span style="font-size:9px;font-weight:400;color:#555">max 30m</span></th>
-          <th style="text-align:center">RRB<br><span style="font-size:9px;font-weight:400;color:#555">max 10m</span></th>
-          <th style="text-align:center">PD<br><span style="font-size:9px;font-weight:400;color:#555">max 2h</span></th>
-          <th style="text-align:center">Outbound<br><span style="font-size:9px;font-weight:400;color:#555">&lt; PD</span></th>
-        </tr></thead>
-        <tbody id="tbodyTN"></tbody>
-      </table></div>
+
+    <!-- FLAG SUMMARY -->
+    <div class="flag-row" id="flagSummary"></div>
+
+    <!-- ALERTS SECTION -->
+    <div class="alerts-section" id="alertsSection">
+      <div class="alerts-sec-title">🚨 Agents Needing Attention</div>
+      <div class="alerts-grid" id="alertsGrid"></div>
     </div>
 
-    <!-- KL -->
-    <div class="panel" id="panelKL">
-      <div id="topKL"></div>
-      <div id="flagsKL"></div>
-      <div class="sec">Agent Performance — Kerala</div>
-      <div class="legend">
-        <span class="leg-title">Legend:</span>
-        <span class="leg"><span class="leg-dot r"></span>Threshold breached</span>
-        <span class="leg"><span class="leg-dot g"></span>Within limit</span>
-        <span class="leg"><span class="leg-dot a"></span>Outbound ≥ PD</span>
-      </div>
-      <div class="search-row">
-        <input class="search" type="text" placeholder="🔍 Search agent…" oninput="filterTable('KL',this.value)">
-        <span class="cnt-lbl" id="shownKL"></span>
-      </div>
-      <div class="tbl-wrap"><table id="tableKL">
-        <thead><tr>
-          <th style="text-align:center">#</th><th>Agent Name</th>
-          <th style="text-align:right">Total Calls</th>
-          <th style="text-align:center">Connected</th><th style="text-align:center">Not Conn.</th>
-          <th style="text-align:center;border-left:1px solid var(--border)">TB<br><span style="font-size:9px;font-weight:400;color:#555">max 30m</span></th>
-          <th style="text-align:center">LB<br><span style="font-size:9px;font-weight:400;color:#555">max 30m</span></th>
-          <th style="text-align:center">RRB<br><span style="font-size:9px;font-weight:400;color:#555">max 10m</span></th>
-          <th style="text-align:center">PD<br><span style="font-size:9px;font-weight:400;color:#555">max 2h</span></th>
-          <th style="text-align:center">Outbound<br><span style="font-size:9px;font-weight:400;color:#555">&lt; PD</span></th>
-        </tr></thead>
-        <tbody id="tbodyKL"></tbody>
-      </table></div>
+    <!-- TABLE -->
+    <div class="sec">Agent Performance Table</div>
+    <div class="legend">
+      <span class="leg-title">Legend:</span>
+      <span class="leg"><span class="leg-dot r"></span> Threshold breached</span>
+      <span class="leg"><span class="leg-dot a"></span> Outbound ≥ PD</span>
+      <span class="leg"><span class="leg-dot p"></span> Talk time</span>
+      <span class="leg" style="color:var(--red)">🚨 Low productivity / High breaks</span>
     </div>
-
-    <!-- HISTORY -->
-    <div class="panel" id="panelHIST">
-      <div class="sec">Upload Snapshot History</div>
-      <div id="snapGrid" class="snap-grid"></div>
+    <div class="tbl-wrap">
+      <table id="mainTable">
+        <thead>
+          <tr class="col-group">
+            <th colspan="2" class="col-group"></th>
+            <th colspan="1" class="col-group left" style="padding-left:10px">PROCESS</th>
+            <th colspan="3" class="col-group div-l" style="text-align:center">CALLS</th>
+            <th colspan="4" class="col-group div-l" style="text-align:center">LOGIN DETAILS</th>
+            <th colspan="6" class="col-group div-l" style="text-align:center">BREAKS</th>
+            <th colspan="1" class="col-group div-l" style="text-align:center">OUTBOUND</th>
+          </tr>
+          <tr>
+            <th class="left">#</th>
+            <th class="left">Agent Name</th>
+            <th class="left"></th>
+            <th class="div-l">Total</th>
+            <th>Connected</th>
+            <th>Not Conn.</th>
+            <th class="div-l">Logged In</th>
+            <th>Talk Time<br><span style="font-size:9px;font-weight:400;color:#555">—</span></th>
+            <th>Idle Time<br><span style="font-size:9px;font-weight:400;color:#555">—</span></th>
+            <th>Break Time<br><span style="font-size:9px;font-weight:400;color:#555">—</span></th>
+            <th class="div-l">TB<br><span style="font-size:9px;font-weight:400;color:#555">max 30m</span></th>
+            <th>LB<br><span style="font-size:9px;font-weight:400;color:#555">max 30m</span></th>
+            <th>RRB<br><span style="font-size:9px;font-weight:400;color:#555">max 10m</span></th>
+            <th>PD<br><span style="font-size:9px;font-weight:400;color:#555">max 2h</span></th>
+            <th class="div-l">Outbound<br><span style="font-size:9px;font-weight:400;color:#555">&lt;PD</span></th>
+          </tr>
+        </thead>
+        <tbody id="mainTbody"></tbody>
+      </table>
     </div>
   </div>
 </div>
 
 <script>
-// ── CONFIG ── Edit REPO_OWNER and REPO_NAME after you create your repo
 const REPO_OWNER = 'ainsanity';
 const REPO_NAME  = 'agent-dashboard';
-const DATA_FILE  = 'data/latest.json';
-const HISTORY_FILE = 'data/history.json';
-const CACHE_BUST = () => `?t=${Date.now()}`;
 const RAW_BASE   = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/`;
+const CACHE_BUST = () => `?t=${Date.now()}`;
 
-// ── HELPERS ──
+// helpers
 function toSec(t){if(!t||t==='00:00:00')return 0;const p=t.split(':').map(Number);return p[0]*3600+p[1]*60+(p[2]||0);}
+function fmtT(t){return t||'00:00:00';}
+
+// flag logic
 function getFlags(a){
-  const tb=toSec(a.TB),lb=toSec(a.LB),rrb=toSec(a.RRB),pd=toSec(a.PD),ob=toSec(a.OUTBOUND);
-  return{calls:a.total_calls<150,TB:tb>30*60,LB:lb>30*60,RRB:rrb>10*60,PD:pd>=2*3600,OB:ob>0&&pd>0&&ob>=pd};
+  const tb=toSec(a.TB), lb=toSec(a.LB), rrb=toSec(a.RRB);
+  const pd=toSec(a.PD), ob=toSec(a.OUTBOUND), talk=toSec(a.talk_time), idle=toSec(a.idle_time);
+  const breaksHigh = tb>30*60 || lb>30*60 || rrb>10*60 || pd>=2*3600;
+  const prodLow = a.total_calls<150 && pd>=2*3600 && talk<3*3600;
+  return {
+    calls: a.total_calls<150,
+    TB: tb>30*60, LB: lb>30*60, RRB: rrb>10*60, PD: pd>=2*3600,
+    OB: ob>0&&pd>0&&ob>=pd,
+    talkLow: talk<3*3600 && talk>0,
+    idleHigh: idle>2*3600,
+    breaksHigh, prodLow,
+    needsAttention: prodLow || breaksHigh
+  };
 }
 
-let DATA_TN=[], DATA_KL=[], HISTORY=[];
+let ALL_DATA = [], ACTIVE_PROCESS = 'ALL', ONLY_FLAGGED = false;
 
 async function loadData(){
   document.getElementById('loadingState').style.display='flex';
   document.getElementById('mainDash').style.display='none';
   document.getElementById('errorState').style.display='none';
   try {
-    const res = await fetch(RAW_BASE + DATA_FILE + CACHE_BUST());
-    if(!res.ok) throw new Error('No data');
+    const res = await fetch(RAW_BASE+'data/latest.json'+CACHE_BUST());
+    if(!res.ok) throw new Error('no data');
     const json = await res.json();
-
-    // Load history
-    try {
-      const hres = await fetch(RAW_BASE + HISTORY_FILE + CACHE_BUST());
-      if(hres.ok) HISTORY = await hres.json();
-    } catch(e){ HISTORY=[]; }
-
-    processData(json);
+    if(!json.agents||!json.agents.length) throw new Error('empty');
+    ALL_DATA = json.agents;
+    const upAt = json.uploaded_at||'–';
+    const repDate = json.report_date||'–';
+    document.getElementById('updatedBadge').textContent = `Last updated: ${upAt} · ${repDate}`;
+    buildProcessFilters();
+    renderAll();
+    document.getElementById('loadingState').style.display='none';
+    document.getElementById('mainDash').style.display='block';
   } catch(e){
     document.getElementById('loadingState').style.display='none';
     document.getElementById('errorState').style.display='flex';
   }
 }
 
-function processData(json){
-  const all = json.agents || [];
-  DATA_TN = all.filter(a=>a.process==='TN'&&a.total_calls>0).sort((a,b)=>b.total_calls-a.total_calls);
-  DATA_KL = all.filter(a=>a.process==='KL'&&a.total_calls>0).sort((a,b)=>b.total_calls-a.total_calls);
-
-  // Header
-  document.getElementById('reportDate').textContent = json.report_date || '–';
-  document.getElementById('lastUpdated').textContent = `Last updated: ${json.uploaded_at || '–'}`;
-  document.getElementById('infoDate').textContent = '📅 ' + (json.report_date||'–');
-  document.getElementById('infoAgents').textContent = `👥 ${DATA_TN.length+DATA_KL.length} active agents`;
-  document.getElementById('infoUploaded').textContent = `⬆ Uploaded: ${json.uploaded_at||'–'}`;
-  document.getElementById('cntHIST').textContent = HISTORY.length;
-
-  buildKPI();
-  buildTop(DATA_TN,'topTN','#58a6ff');
-  buildTop(DATA_KL,'topKL','#3fb950');
-  buildFlags(DATA_TN,'flagsTN');
-  buildFlags(DATA_KL,'flagsKL');
-  buildTable(DATA_TN,'tbodyTN','cntTN','shownTN');
-  buildTable(DATA_KL,'tbodyKL','cntKL','shownKL');
-  buildHistory();
-
-  document.getElementById('loadingState').style.display='none';
-  document.getElementById('mainDash').style.display='block';
+function buildProcessFilters(){
+  const procs = ['ALL', ...new Set(ALL_DATA.map(a=>a.process_full||a.process))];
+  const bar = document.getElementById('processFilters');
+  bar.innerHTML = procs.map(p=>{
+    const label = p==='ALL'?'All Processes': p.replace('TMF_','TMF ');
+    const isKL = p.includes('Kerala');
+    return `<button class="filter-btn ${p==='ALL'?'active':''}" data-proc="${p}" onclick="setProcess('${p}',this)">${label}</button>`;
+  }).join('');
 }
 
-function buildKPI(){
-  const all=[...DATA_TN,...DATA_KL];
-  const tot=all.reduce((s,a)=>s+a.total_calls,0);
-  const conn=all.reduce((s,a)=>s+a.connected,0);
-  const connRate=tot>0?Math.round(conn/tot*100):0;
-  const flagCalls=all.filter(a=>getFlags(a).calls).length;
-  const flagBreak=all.filter(a=>{const f=getFlags(a);return f.TB||f.LB||f.RRB||f.PD;}).length;
-  const flagOB=all.filter(a=>getFlags(a).OB).length;
+function setProcess(proc, btn){
+  ACTIVE_PROCESS = proc;
+  document.querySelectorAll('.filter-btn').forEach(b=>{
+    b.className='filter-btn'+(b.dataset.proc===proc?(proc.includes('Kerala')?' active-kl':' active'):'');
+  });
+  applyFilters();
+}
+
+function toggleFlagFilter(){
+  ONLY_FLAGGED = !ONLY_FLAGGED;
+  document.getElementById('flagFilterBtn').classList.toggle('active', ONLY_FLAGGED);
+  applyFilters();
+}
+
+function getFiltered(){
+  const q = document.getElementById('searchBox').value.toLowerCase();
+  return ALL_DATA.filter(a=>{
+    const procMatch = ACTIVE_PROCESS==='ALL' || (a.process_full||a.process)===ACTIVE_PROCESS || a.process===ACTIVE_PROCESS;
+    const nameMatch = a.name.toLowerCase().includes(q) || a.agent_id.toLowerCase().includes(q);
+    const f = getFlags(a);
+    const flagMatch = !ONLY_FLAGGED || f.needsAttention || f.calls || f.TB || f.LB || f.RRB || f.PD || f.OB;
+    return procMatch && nameMatch && flagMatch;
+  }).sort((a,b)=>b.total_calls-a.total_calls);
+}
+
+function renderAll(){
+  const data = getFiltered();
+  buildKPI(data);
+  buildAlerts(data);
+  buildFlagSummary(data);
+  buildTable(data);
+  document.getElementById('shownCount').textContent = `${data.length} agents`;
+}
+
+function applyFilters(){ renderAll(); }
+
+function buildKPI(data){
+  const tot = data.reduce((s,a)=>s+a.total_calls,0);
+  const conn = data.reduce((s,a)=>s+a.connected,0);
+  const connRate = tot>0?Math.round(conn/tot*100):0;
+  const alerts = data.filter(a=>getFlags(a).needsAttention).length;
+  const flagCalls = data.filter(a=>getFlags(a).calls).length;
+  const flagBreak = data.filter(a=>{const f=getFlags(a);return f.TB||f.LB||f.RRB||f.PD;}).length;
+  const avgTalk = data.length>0 ? data.reduce((s,a)=>s+toSec(a.talk_time),0)/data.length : 0;
+  const hh=Math.floor(avgTalk/3600), mm=Math.floor((avgTalk%3600)/60);
+  const avgTalkStr = `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
+
   document.getElementById('kpiRow').innerHTML=`
-    <div class="kpi"><div class="lbl">Total Calls</div><div class="val blue">${tot.toLocaleString()}</div><div class="sub">All active agents</div></div>
+    <div class="kpi"><div class="lbl">Total Calls</div><div class="val blue">${tot.toLocaleString()}</div><div class="sub">Active agents: ${data.length}</div></div>
     <div class="kpi"><div class="lbl">Connected</div><div class="val green">${conn.toLocaleString()}</div><div class="sub">${connRate}% rate</div></div>
-    <div class="kpi"><div class="lbl">Active Agents</div><div class="val white">${all.length}</div><div class="sub">TN:${DATA_TN.length} · KL:${DATA_KL.length}</div></div>
+    <div class="kpi"><div class="lbl">Avg Talk Time</div><div class="val purple">${avgTalkStr}</div><div class="sub">Per agent</div></div>
     <div class="kpi"><div class="lbl">Calls &lt;150</div><div class="val ${flagCalls>0?'red':'green'}">${flagCalls}</div><div class="sub">Below target</div></div>
     <div class="kpi"><div class="lbl">Break Alerts</div><div class="val ${flagBreak>0?'red':'green'}">${flagBreak}</div><div class="sub">TB/LB/RRB/PD</div></div>
-    <div class="kpi"><div class="lbl">OB≥PD Alerts</div><div class="val ${flagOB>0?'red':'green'}">${flagOB}</div><div class="sub">Outbound≥PD</div></div>`;
+    <div class="kpi"><div class="lbl">Prod. Alerts</div><div class="val ${alerts>0?'red':'green'}">${alerts}</div><div class="sub">Low prod/High breaks</div></div>
+    <div class="kpi"><div class="lbl">Active Agents</div><div class="val white">${data.length}</div><div class="sub">0-call agents hidden</div></div>`;
 }
 
-function buildTop(data,id,color){
-  const medals=['🥇','🥈','🥉'];
-  let html='<div class="sec">Top Performers</div><div class="top-row">';
-  data.slice(0,3).forEach((a,i)=>{
-    const cr=a.total_calls>0?Math.round(a.connected/a.total_calls*100):0;
-    html+=`<div class="top-card"><div class="medal">${medals[i]}</div><div>
-      <div class="top-name">${a.name}</div>
-      <div class="top-calls" style="color:${color}">${a.total_calls}</div>
-      <div class="top-sub">${cr}% connected</div></div></div>`;
-  });
-  html+='</div>';
-  document.getElementById(id).innerHTML=html;
+function buildAlerts(data){
+  const banner = document.getElementById('alertBanner');
+  const pills = document.getElementById('alertPills');
+  const section = document.getElementById('alertsSection');
+  const grid = document.getElementById('alertsGrid');
+  const alertAgents = data.filter(a=>getFlags(a).needsAttention);
+
+  if(!alertAgents.length){
+    banner.classList.remove('show');
+    section.classList.remove('show');
+    return;
+  }
+
+  // Banner pills
+  banner.classList.add('show');
+  pills.innerHTML = alertAgents.slice(0,8).map(a=>{
+    const f=getFlags(a);
+    const cls = f.prodLow ? '' : 'amber';
+    return `<span class="alert-pill ${cls}">${f.prodLow?'🔴':'🟡'} ${a.name}</span>`;
+  }).join('') + (alertAgents.length>8?`<span class="alert-pill">+${alertAgents.length-8} more</span>`:'');
+
+  // Alerts section
+  section.classList.add('show');
+  grid.innerHTML = alertAgents.map(a=>{
+    const f=getFlags(a);
+    const reasons=[];
+    if(f.prodLow) reasons.push('<span class="alert-tag prod">📉 Productivity Low</span>');
+    if(f.calls) reasons.push('<span class="alert-tag prod">📞 Calls &lt;150</span>');
+    if(f.breaksHigh) reasons.push('<span class="alert-tag break">⏱ Breaks High</span>');
+    if(f.talkLow) reasons.push('<span class="alert-tag prod">🎙 Talk Time Low</span>');
+    if(f.PD) reasons.push('<span class="alert-tag break">PD ≥2h</span>');
+    if(f.TB) reasons.push('<span class="alert-tag break">TB &gt;30m</span>');
+    if(f.LB) reasons.push('<span class="alert-tag break">LB &gt;30m</span>');
+    if(f.RRB) reasons.push('<span class="alert-tag break">RRB &gt;10m</span>');
+    const procLabel = (a.process_full||a.process||'').replace('TMF_','');
+    return `<div class="alert-card">
+      <div class="alert-agent">${a.name} <span style="font-size:10px;color:var(--muted);font-weight:400">${procLabel}</span></div>
+      <div class="alert-reasons">${reasons.join('')}</div>
+    </div>`;
+  }).join('');
 }
 
-function buildFlags(data,id){
+function buildFlagSummary(data){
   const tbF=data.filter(a=>getFlags(a).TB).length;
   const lbF=data.filter(a=>getFlags(a).LB).length;
   const rrbF=data.filter(a=>getFlags(a).RRB).length;
   const pdF=data.filter(a=>getFlags(a).PD).length;
   const obF=data.filter(a=>getFlags(a).OB).length;
   const callF=data.filter(a=>getFlags(a).calls).length;
-  const chip=(lbl,n)=>n>0?`<span class="chip bad">⚠ ${lbl}: ${n}</span>`:`<span class="chip ok">✓ ${lbl}</span>`;
-  document.getElementById(id).innerHTML=`
-    <div class="sec">Flag Summary</div>
-    <div class="flag-row">
-      ${chip('TB>30m',tbF)}${chip('LB>30m',lbF)}${chip('RRB>10m',rrbF)}${chip('PD≥2h',pdF)}
-      ${obF>0?`<span class="chip warn">⚠ OB≥PD: ${obF}</span>`:`<span class="chip ok">✓ Outbound OK</span>`}
-      ${chip('Calls<150',callF)}
-    </div>`;
+  const prodF=data.filter(a=>getFlags(a).prodLow).length;
+  const chip=(lbl,n,type='bad')=>n>0?`<span class="chip ${type}">⚠ ${lbl}: ${n}</span>`:`<span class="chip ok">✓ ${lbl}</span>`;
+  document.getElementById('flagSummary').innerHTML=`
+    ${chip('TB>30m',tbF)}${chip('LB>30m',lbF)}${chip('RRB>10m',rrbF)}${chip('PD≥2h',pdF)}
+    ${obF>0?`<span class="chip warn">⚠ OB≥PD: ${obF}</span>`:`<span class="chip ok">✓ Outbound OK</span>`}
+    ${chip('Calls<150',callF)}
+    ${prodF>0?`<span class="chip bad info">🚨 Low Prod: ${prodF}</span>`:`<span class="chip ok">✓ Productivity OK</span>`}`;
 }
 
-function buildTable(data,tbodyId,cntId,shownId){
-  const tbody=document.getElementById(tbodyId);
+function buildTable(data){
+  const tbody = document.getElementById('mainTbody');
   tbody.innerHTML='';
   data.forEach((a,i)=>{
     const f=getFlags(a);
     const rank=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);
-    const ob=f.OB?'<span class="ob-badge">≥PD</span>':'';
+    const procFull = a.process_full||a.process||'';
+    const isKL = procFull.includes('Kerala');
+    const procTag = `<span class="proc-tag ${isKL?'proc-kl':'proc-tn'}">${procFull.replace('TMF_','TMF ')}</span>`;
+    const prodBadge = f.prodLow?'<span class="prod-badge">🚨 Low Prod</span>':'';
+    const breakBadge = f.breaksHigh&&!f.prodLow?'<span class="ob-badge">⚠ Breaks</span>':'';
+    const obBadge = f.OB?'<span class="ob-badge">≥PD</span>':'';
+
+    const talkClass = f.talkLow?'tc talk low':'tc talk';
+    const idleClass = f.idleHigh?'tc idle-hi':'tc ok';
+
     const tr=document.createElement('tr');
-    tr.dataset.name=a.name.toLowerCase();
+    if(f.needsAttention) tr.classList.add('prod-alert');
+    tr.dataset.name=(a.name+' '+(a.process_full||'')).toLowerCase();
     tr.innerHTML=`
-      <td class="rank">${rank}</td><td class="name">${a.name}</td>
-      <td class="calls ${f.calls?'red':'grn'}">${a.total_calls}</td>
-      <td style="text-align:center"><span class="conn">${a.connected}</span></td>
-      <td style="text-align:center"><span class="nconn">${a.not_connected}</span></td>
-      <td class="brk ${f.TB?'red':'ok'}">${a.TB||'00:00:00'}</td>
-      <td class="brk ${f.LB?'red':'ok'}">${a.LB||'00:00:00'}</td>
-      <td class="brk ${f.RRB?'red':'ok'}">${a.RRB||'00:00:00'}</td>
-      <td class="brk ${f.PD?'red':'ok'}">${a.PD||'00:00:00'}</td>
-      <td class="brk ${f.OB?'warn':'ok'}">${a.OUTBOUND||'00:00:00'}${ob}</td>`;
+      <td class="rank">${rank}</td>
+      <td class="name-cell">${a.name}${prodBadge}${breakBadge}</td>
+      <td class="left">${procTag}</td>
+      <td class="calls div-l ${f.calls?'red':'grn'}">${a.total_calls}</td>
+      <td><span class="conn">${a.connected}</span></td>
+      <td><span class="nconn">${a.not_connected}</span></td>
+      <td class="tc div-l ok">${fmtT(a.logged_in)}</td>
+      <td class="${talkClass}">${fmtT(a.talk_time)}</td>
+      <td class="${idleClass}">${fmtT(a.idle_time)}</td>
+      <td class="tc ok">${fmtT(a.break_time)}</td>
+      <td class="tc div-l ${f.TB?'red':'ok'}">${fmtT(a.TB)}</td>
+      <td class="tc ${f.LB?'red':'ok'}">${fmtT(a.LB)}</td>
+      <td class="tc ${f.RRB?'red':'ok'}">${fmtT(a.RRB)}</td>
+      <td class="tc ${f.PD?'red':'ok'}">${fmtT(a.PD)}</td>
+      <td class="tc div-l ${f.OB?'warn':'ok'}">${fmtT(a.OUTBOUND)}${obBadge}</td>`;
     tbody.appendChild(tr);
   });
-  document.getElementById(cntId).textContent=data.length;
-  document.getElementById(shownId).textContent=`Showing ${data.length} active agents`;
 }
 
-function buildHistory(){
-  const grid=document.getElementById('snapGrid');
-  if(!HISTORY.length){grid.innerHTML='<div class="empty">No snapshots yet. Snapshots are saved each time admin uploads a file.</div>';return;}
-  grid.innerHTML=HISTORY.slice().reverse().map(s=>`
-    <div class="snap-card">
-      <div class="snap-time">${s.uploaded_at}</div>
-      <div class="snap-meta">📅 ${s.report_date}</div>
-      <div class="snap-stats">
-        <span class="snap-stat calls">📞 ${s.total_calls} calls</span>
-        <span class="snap-stat flags">⚠ ${s.total_flags} flags</span>
-      </div>
-    </div>`).join('');
-}
-
-function filterTable(proc,q){
-  const id=proc==='TN'?'tbodyTN':'tbodyKL';
-  const shownId=proc==='TN'?'shownTN':'shownKL';
-  const rows=document.getElementById(id).querySelectorAll('tr');
-  let n=0;
-  rows.forEach(tr=>{const m=tr.dataset.name.includes(q.toLowerCase());tr.style.display=m?'':'none';if(m)n++;});
-  document.getElementById(shownId).textContent=`Showing ${n} agents`;
-}
-
-function switchTab(t){
-  ['TN','KL','HIST'].forEach(x=>{
-    document.getElementById(`panel${x}`).classList.toggle('active',x===t);
-    const btn=document.getElementById(`tab${x}`);
-    if(!btn)return;
-    btn.className='tab'+(x===t?(x==='TN'?' tn-active':x==='KL'?' kl-active':' tn-active'):'');
-  });
-}
-
-// Auto-refresh every 5 minutes
+// auto-refresh every 5 min
 setInterval(loadData, 5*60*1000);
 loadData();
 </script>
