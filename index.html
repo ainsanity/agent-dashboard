@@ -23,41 +23,49 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 /* HEADER */
 .hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow);}
 .hdr-left{display:flex;align-items:center;gap:10px;}
-.hdr-logo{font-size:20px;}
 .hdr h1{font-size:16px;font-weight:700;color:var(--text);}
 .hdr-sub{font-size:11px;color:var(--muted);margin-top:1px;}
 .hdr-right{display:flex;align-items:center;gap:8px;}
 .updated-badge{font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid var(--border);color:var(--muted);background:var(--surface2);font-family:'JetBrains Mono',monospace;}
+.time-badge{font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid var(--blue-border);color:var(--blue);background:var(--blue-bg);font-family:'JetBrains Mono',monospace;font-weight:600;}
 .refresh-btn{background:var(--blue);color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:'Inter',sans-serif;transition:all .15s;box-shadow:var(--shadow);}
 .refresh-btn:hover{background:#1558c0;}
 
+/* TIME CONTEXT BAR */
+.time-bar{background:var(--blue-bg);border-bottom:1px solid var(--blue-border);padding:7px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.time-bar-label{font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.7px;}
+.time-slot{font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid var(--blue-border);color:var(--muted);background:#fff;transition:all .2s;}
+.time-slot.current{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:600;}
+.time-slot.done{background:var(--green-bg);color:var(--green);border-color:var(--green-border);}
+.calls-target{font-size:11px;font-weight:700;color:var(--blue);margin-left:auto;background:#fff;padding:4px 12px;border-radius:20px;border:1px solid var(--blue-border);}
+
 /* ALERT BANNER */
-.alert-banner{display:none;background:#fef2f2;border-bottom:2px solid #fca5a5;padding:10px 24px;}
+.alert-banner{display:none;background:#fef2f2;border-bottom:2px solid #fca5a5;padding:9px 24px;}
 .alert-banner.show{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
-.alert-title{font-size:12px;font-weight:700;color:var(--red);white-space:nowrap;display:flex;align-items:center;gap:6px;}
+.alert-title{font-size:12px;font-weight:700;color:var(--red);white-space:nowrap;}
 .alert-pills{display:flex;gap:6px;flex-wrap:wrap;}
-.alert-pill{font-size:11px;background:#fff;border:1px solid var(--red-border);color:var(--red);padding:3px 10px;border-radius:20px;font-weight:600;display:flex;align-items:center;gap:4px;}
-.alert-pill.amber{border-color:var(--amber-border);color:var(--amber);background:#fffbeb;}
+.alert-pill{font-size:11px;background:#fff;border:1px solid var(--red-border);color:var(--red);padding:3px 10px;border-radius:20px;font-weight:600;}
+.alert-pill.amber{border-color:var(--amber-border);color:var(--amber);background:var(--amber-bg);}
 
 /* KPI */
-.kpi-row{display:grid;grid-template-columns:repeat(7,1fr);gap:12px;padding:16px 24px;background:var(--bg);}
-.kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow);}
-.kpi .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:600;margin-bottom:6px;}
-.kpi .val{font-size:22px;font-weight:700;font-family:'JetBrains Mono',monospace;}
-.kpi .sub{font-size:10px;color:var(--muted2);margin-top:3px;}
-.val.blue{color:var(--blue);}.val.green{color:#15803d;}.val.red{color:var(--red);}.val.neutral{color:var(--text);}.val.amber{color:#b45309;}.val.purple{color:var(--purple);}
+.kpi-row{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;padding:14px 24px;background:var(--bg);}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;box-shadow:var(--shadow);}
 .kpi.alert-kpi{background:var(--red-bg);border-color:var(--red-border);}
+.kpi .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);font-weight:600;margin-bottom:4px;}
+.kpi .val{font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.kpi .sub{font-size:10px;color:var(--muted2);margin-top:2px;}
+.val.blue{color:var(--blue);}.val.green{color:#15803d;}.val.red{color:var(--red);}.val.neutral{color:var(--text);}.val.amber{color:#b45309;}.val.purple{color:var(--purple);}
 
-/* FILTERS BAR */
-.filters-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:var(--shadow);}
+/* FILTERS */
+.filters-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:9px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:var(--shadow);}
 .filter-label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap;}
 .filter-group{display:flex;gap:4px;flex-wrap:wrap;}
 .filter-btn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:5px 13px;border-radius:20px;cursor:pointer;font-size:12px;font-weight:500;font-family:'Inter',sans-serif;transition:all .15s;user-select:none;}
 .filter-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-bg);}
 .filter-btn.active{background:var(--blue-bg);border-color:var(--blue-border);color:var(--blue);font-weight:600;}
-.divider-v{width:1px;height:24px;background:var(--border);margin:0 4px;}
+.divider-v{width:1px;height:24px;background:var(--border);margin:0 2px;}
 .search-wrap{position:relative;margin-left:auto;}
-.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--muted2);}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:13px;height:13px;stroke:var(--muted2);fill:none;stroke-width:2;}
 .search{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Inter',sans-serif;font-size:12px;padding:6px 12px 6px 30px;border-radius:20px;width:200px;outline:none;transition:border .15s;}
 .search:focus{border-color:var(--blue);background:#fff;}
 .search::placeholder{color:var(--muted2);}
@@ -67,20 +75,19 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 .cnt-lbl{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;white-space:nowrap;}
 
 /* CONTENT */
-.content{padding:16px 24px;}
+.content{padding:14px 24px;}
 
 /* FLAG SUMMARY */
-.flag-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.flag-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
 .chip{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;border:1px solid;}
 .chip.bad{background:var(--red-bg);border-color:var(--red-border);color:var(--red);}
 .chip.ok{background:var(--green-bg);border-color:var(--green-border);color:var(--green);}
 .chip.warn{background:var(--amber-bg);border-color:var(--amber-border);color:var(--amber);}
-.chip.info{background:var(--purple-bg);border-color:var(--purple-border);color:var(--purple);}
 
 /* ALERTS SECTION */
-.alerts-section{background:var(--red-bg);border:1px solid var(--red-border);border-radius:10px;padding:14px 16px;margin-bottom:16px;display:none;}
+.alerts-section{background:var(--red-bg);border:1px solid var(--red-border);border-radius:10px;padding:14px 16px;margin-bottom:14px;display:none;}
 .alerts-section.show{display:block;}
-.alerts-sec-title{font-size:12px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.alerts-sec-title{font-size:12px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;}
 .alerts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;}
 .alert-card{background:#fff;border:1px solid var(--red-border);border-radius:8px;padding:10px 12px;box-shadow:var(--shadow);}
 .alert-agent{font-weight:700;font-size:12px;color:var(--text);margin-bottom:5px;}
@@ -95,10 +102,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 
 /* TABLE */
 .tbl-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:10px;background:var(--surface);box-shadow:var(--shadow-md);}
-table{width:100%;border-collapse:collapse;min-width:1150px;}
+table{width:100%;border-collapse:collapse;min-width:1200px;}
 thead tr.group-row th{background:#f8fafc;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted2);border-bottom:1px solid var(--border);padding:5px 10px;text-align:center;}
 thead tr.group-row th.left{text-align:left;}
-thead tr.col-row th{background:#f1f5f9;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);border-bottom:2px solid var(--border2);padding:8px 10px;text-align:center;white-space:nowrap;}
+thead tr.col-row th{background:#f1f5f9;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);border-bottom:2px solid var(--border2);padding:8px 10px;text-align:center;white-space:nowrap;}
 thead tr.col-row th.left{text-align:left;}
 tbody tr{border-bottom:1px solid #f1f5f9;transition:background .1s;}
 tbody tr:hover{background:#f8fafc;}
@@ -107,21 +114,18 @@ tbody tr.prod-alert{background:#fff8f8;}
 tbody tr.prod-alert:hover{background:#fff0f0;}
 td{padding:8px 10px;font-size:12px;white-space:nowrap;text-align:center;}
 td.left{text-align:left;}
-
-/* rank */
 td.rank{color:var(--muted2);font-family:'JetBrains Mono',monospace;font-size:11px;width:36px;}
-/* name */
 td.name-cell{font-weight:600;color:var(--text);min-width:150px;text-align:left;}
-/* process tag */
 .proc-tag{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;display:inline-block;}
 .proc-tn{background:var(--blue-bg);border:1px solid var(--blue-border);color:var(--blue);}
 .proc-kl{background:var(--green-bg);border:1px solid var(--green-border);color:var(--green);}
 .proc-other{background:var(--purple-bg);border:1px solid var(--purple-border);color:var(--purple);}
-/* calls */
 td.calls{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;}
 td.calls.red{color:var(--red);background:var(--red-bg);}
 td.calls.grn{color:#15803d;}
-/* time */
+td.conn-rate{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;}
+td.conn-rate.red{color:var(--red);background:var(--red-bg);}
+td.conn-rate.ok{color:#15803d;}
 td.tc{font-family:'JetBrains Mono',monospace;font-size:11px;}
 td.tc.red{background:var(--red-bg);color:var(--red);font-weight:700;}
 td.tc.ok{color:var(--muted);}
@@ -129,14 +133,12 @@ td.tc.warn{background:var(--amber-bg);color:var(--amber);font-weight:700;}
 td.tc.talk{color:var(--purple);font-weight:600;}
 td.tc.talk.low{color:var(--red);background:var(--red-bg);font-weight:700;}
 td.tc.idle-hi{color:var(--amber);background:var(--amber-bg);font-weight:700;}
-/* conn */
 .conn{color:#15803d;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;}
 .nconn{color:var(--muted2);font-family:'JetBrains Mono',monospace;font-size:11px;}
-/* badges */
 .prod-badge{display:inline-block;font-size:9px;background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);border-radius:3px;padding:1px 5px;margin-left:5px;font-weight:600;vertical-align:middle;}
+.break-badge{display:inline-block;font-size:9px;background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border);border-radius:3px;padding:1px 5px;margin-left:4px;font-weight:600;vertical-align:middle;}
 .ob-badge{display:inline-block;font-size:9px;background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border);border-radius:3px;padding:1px 5px;margin-left:4px;font-weight:600;vertical-align:middle;}
-/* divider cols */
-th.div-l{border-left:1px solid var(--border2);}
+th.div-l,td.div-l{border-left:1px solid var(--border2);}
 td.div-l{border-left:1px solid #e9ecef;}
 
 /* LEGEND */
@@ -148,14 +150,14 @@ td.div-l{border-left:1px solid #e9ecef;}
 .leg-dot.a{background:var(--amber-bg);border:1px solid var(--amber-border);}
 .leg-dot.p{background:var(--purple-bg);border:1px solid var(--purple-border);}
 
-/* loading/error */
+/* loading */
 #loadingState{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px;}
 .spinner{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .load-text{color:var(--muted);font-size:13px;}
 #errorState{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:12px;}
 
-@media(max-width:1000px){.kpi-row{grid-template-columns:repeat(4,1fr);}}
+@media(max-width:1100px){.kpi-row{grid-template-columns:repeat(4,1fr);}}
 @media(max-width:600px){.kpi-row{grid-template-columns:repeat(2,1fr);}}
 </style>
 </head>
@@ -164,16 +166,27 @@ td.div-l{border-left:1px solid #e9ecef;}
 <!-- HEADER -->
 <div class="hdr">
   <div class="hdr-left">
-    <span class="hdr-logo">📊</span>
+    <span style="font-size:20px">📊</span>
     <div>
       <h1>Agent Performance Dashboard</h1>
-      <div class="hdr-sub">Call Center Daily Report</div>
+      <div class="hdr-sub">Shift: 9:00 AM – 6:00 PM</div>
     </div>
   </div>
   <div class="hdr-right">
+    <span class="time-badge" id="currentTimeBadge">--:--</span>
     <span class="updated-badge" id="updatedBadge">Loading…</span>
     <button class="refresh-btn" onclick="loadData()">↻ Refresh</button>
   </div>
+</div>
+
+<!-- TIME CONTEXT BAR -->
+<div class="time-bar">
+  <span class="time-bar-label">📅 Shift Progress:</span>
+  <span class="time-slot" id="slot1">9AM–11AM · Target: 33 calls</span>
+  <span class="time-slot" id="slot2">11AM–1PM · Target: 66 calls</span>
+  <span class="time-slot" id="slot3">1PM–3PM · Target: 100 calls</span>
+  <span class="time-slot" id="slot4">3PM–6PM · Target: 150 calls</span>
+  <span class="calls-target" id="currentTarget">Current Target: — calls</span>
 </div>
 
 <!-- ALERT BANNER -->
@@ -194,8 +207,6 @@ td.div-l{border-left:1px solid #e9ecef;}
 
 <!-- MAIN -->
 <div id="mainDash" style="display:none">
-
-  <!-- KPI STRIP -->
   <div class="kpi-row" id="kpiRow"></div>
 
   <!-- FILTERS -->
@@ -205,38 +216,35 @@ td.div-l{border-left:1px solid #e9ecef;}
     <div class="divider-v"></div>
     <div class="flag-filter" id="flagFilterBtn" onclick="toggleFlagFilter()">⚠ Flagged only</div>
     <div class="search-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       <input class="search" type="text" placeholder="Search agent…" id="searchBox" oninput="applyFilters()">
     </div>
     <span class="cnt-lbl" id="shownCount"></span>
   </div>
 
   <div class="content">
-
-    <!-- FLAG SUMMARY -->
     <div class="flag-row" id="flagSummary"></div>
 
-    <!-- ALERTS SECTION -->
     <div class="alerts-section" id="alertsSection">
       <div class="alerts-sec-title">🚨 Agents Needing Attention</div>
       <div class="alerts-grid" id="alertsGrid"></div>
     </div>
 
-    <!-- TABLE -->
     <div class="sec">Agent Performance Table</div>
     <div class="legend">
       <span class="leg-title">Legend:</span>
       <span class="leg"><span class="leg-dot r"></span> Threshold breached</span>
-      <span class="leg"><span class="leg-dot a"></span> Outbound ≥ PD / Idle high</span>
+      <span class="leg"><span class="leg-dot a"></span> Warning / Outbound ≥ PD</span>
       <span class="leg"><span class="leg-dot p"></span> Talk time</span>
       <span class="leg" style="color:var(--red);font-weight:600">🚨 Low productivity / High breaks</span>
     </div>
+
     <div class="tbl-wrap">
-      <table id="mainTable">
+      <table>
         <thead>
           <tr class="group-row">
             <th colspan="3" class="left"></th>
-            <th colspan="3" class="div-l">CALLS</th>
+            <th colspan="4" class="div-l">CALLS</th>
             <th colspan="4" class="div-l">LOGIN DETAILS</th>
             <th colspan="4" class="div-l">BREAKS</th>
             <th colspan="1" class="div-l">OUTBOUND</th>
@@ -245,14 +253,15 @@ td.div-l{border-left:1px solid #e9ecef;}
             <th class="left">#</th>
             <th class="left">Agent Name</th>
             <th class="left">Process</th>
-            <th class="div-l">Total</th>
+            <th class="div-l">Total<br><span id="callTargetHdr" style="font-size:9px;font-weight:400;color:#aaa">target —</span></th>
             <th>Connected</th>
             <th>Not Conn.</th>
+            <th>Conn.%<br><span style="font-size:9px;font-weight:400;color:#aaa">min 50%</span></th>
             <th class="div-l">Logged In</th>
             <th>Talk Time</th>
             <th>Idle Time</th>
             <th>Break Time</th>
-            <th class="div-l">TB<br><span style="font-size:9px;font-weight:400;color:#aaa">max 30m</span></th>
+            <th class="div-l">TB<br><span style="font-size:9px;font-weight:400;color:#aaa" id="tbRuleHdr">—</span></th>
             <th>LB<br><span style="font-size:9px;font-weight:400;color:#aaa">max 30m</span></th>
             <th>RRB<br><span style="font-size:9px;font-weight:400;color:#aaa">max 10m</span></th>
             <th>PD<br><span style="font-size:9px;font-weight:400;color:#aaa">max 2h</span></th>
@@ -266,23 +275,94 @@ td.div-l{border-left:1px solid #e9ecef;}
 </div>
 
 <script>
-const REPO_OWNER = 'ainsanity';
-const REPO_NAME  = 'agent-dashboard';
-const RAW_BASE   = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/`;
-const CACHE_BUST = () => `?t=${Date.now()}`;
+const REPO_OWNER='ainsanity', REPO_NAME='agent-dashboard';
+const RAW_BASE=`https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/`;
+const CACHE_BUST=()=>`?t=${Date.now()}`;
+
+// ── TIME LOGIC ──
+function getNow(){
+  // Use current local time
+  const now = new Date();
+  return now.getHours() + now.getMinutes()/60; // decimal hours
+}
+
+function getCallTarget(){
+  const h = getNow();
+  if(h < 11) return 33;
+  if(h < 13) return 66;
+  if(h < 15) return 100;
+  return 150;
+}
+
+function getTBLimit(){
+  // Before 4PM: max 15 min total TB
+  // After 4PM: max 30 min cumulative TB
+  const h = getNow();
+  return h >= 16 ? 30*60 : 15*60;
+}
+
+function getTBLimitLabel(){
+  const h = getNow();
+  return h >= 16 ? 'max 30m (after 4PM)' : 'max 15m';
+}
+
+function updateTimeUI(){
+  const now = new Date();
+  const h = now.getHours(), m = now.getMinutes();
+  const hStr = String(h).padStart(2,'0'), mStr = String(m).padStart(2,'0');
+  document.getElementById('currentTimeBadge').textContent = `🕐 ${hStr}:${mStr}`;
+
+  const hDec = h + m/60;
+  // Slot highlighting
+  const slots = [
+    {id:'slot1', start:9, end:11},
+    {id:'slot2', start:11, end:13},
+    {id:'slot3', start:13, end:15},
+    {id:'slot4', start:15, end:18}
+  ];
+  slots.forEach(s=>{
+    const el = document.getElementById(s.id);
+    el.className = 'time-slot';
+    if(hDec >= s.start && hDec < s.end) el.classList.add('current');
+    else if(hDec >= s.end) el.classList.add('done');
+  });
+
+  const target = getCallTarget();
+  document.getElementById('currentTarget').textContent = `Current Target: ${target} calls`;
+  document.getElementById('callTargetHdr').textContent = `target: ${target}`;
+  document.getElementById('tbRuleHdr').textContent = getTBLimitLabel();
+}
 
 function toSec(t){if(!t||t==='00:00:00')return 0;const p=t.split(':').map(Number);return p[0]*3600+p[1]*60+(p[2]||0);}
 function fmtT(t){return t||'00:00:00';}
+function fmtPct(n){return n.toFixed(0)+'%';}
 
 function getFlags(a){
-  const tb=toSec(a.TB),lb=toSec(a.LB),rrb=toSec(a.RRB);
-  const pd=toSec(a.PD),ob=toSec(a.OUTBOUND),talk=toSec(a.talk_time),idle=toSec(a.idle_time);
-  const breaksHigh=tb>30*60||lb>30*60||rrb>10*60||pd>=2*3600;
-  const prodLow=a.total_calls<150&&pd>=2*3600&&talk<3*3600;
-  return{
-    calls:a.total_calls<150,TB:tb>30*60,LB:lb>30*60,RRB:rrb>10*60,PD:pd>=2*3600,
-    OB:ob>0&&pd>0&&ob>=pd,talkLow:talk<3*3600&&talk>0,idleHigh:idle>2*3600,
-    breaksHigh,prodLow,needsAttention:prodLow||breaksHigh
+  const tb=toSec(a.TB), lb=toSec(a.LB), rrb=toSec(a.RRB);
+  const pd=toSec(a.PD), ob=toSec(a.OUTBOUND);
+  const talk=toSec(a.talk_time), idle=toSec(a.idle_time);
+  const callTarget = getCallTarget();
+  const tbLimit = getTBLimit();
+  const connRate = a.total_calls>0 ? a.connected/a.total_calls*100 : 0;
+
+  const tbFlag = tb > tbLimit;
+  const lbFlag = lb > 30*60;
+  const rrbFlag = rrb > 10*60;
+  const pdFlag = pd >= 2*3600;
+  const callsFlag = a.total_calls < callTarget;
+  const connFlag = a.total_calls > 0 && connRate < 50;
+  const obFlag = ob>0 && pd>0 && ob>=pd;
+  const talkLow = talk < 3*3600 && talk > 0;
+  const idleHigh = idle > 2*3600;
+
+  const breaksHigh = tbFlag || lbFlag || rrbFlag || pdFlag;
+  const prodLow = callsFlag && pdFlag && talkLow;
+  const needsAttention = prodLow || breaksHigh || connFlag;
+
+  return {
+    calls:callsFlag, TB:tbFlag, LB:lbFlag, RRB:rrbFlag, PD:pdFlag,
+    OB:obFlag, talkLow, idleHigh, connRate, connFlag,
+    breaksHigh, prodLow, needsAttention
   };
 }
 
@@ -292,11 +372,12 @@ async function loadData(){
   document.getElementById('loadingState').style.display='flex';
   document.getElementById('mainDash').style.display='none';
   document.getElementById('errorState').style.display='none';
+  updateTimeUI();
   try{
     const res=await fetch(RAW_BASE+'data/latest.json'+CACHE_BUST());
-    if(!res.ok)throw new Error('no data');
+    if(!res.ok) throw new Error('no data');
     const json=await res.json();
-    if(!json.agents||!json.agents.length)throw new Error('empty');
+    if(!json.agents||!json.agents.length) throw new Error('empty');
     ALL_DATA=json.agents;
     document.getElementById('updatedBadge').textContent=`Last updated: ${json.uploaded_at||'–'} · ${json.report_date||'–'}`;
     buildProcessFilters();
@@ -310,42 +391,25 @@ async function loadData(){
 }
 
 function buildProcessFilters(){
-  // Get unique process names from data
   const procs=[...new Set(ALL_DATA.map(a=>a.process_full||a.process))].sort();
   const bar=document.getElementById('processFilters');
-  // Build buttons: ALL + each process
-  const allBtn=`<button class="filter-btn active" data-proc="ALL" onclick="toggleProcess('ALL',this)">All Processes</button>`;
-  const procBtns=procs.map(p=>{
-    const label=p.replace('TMF_','TMF ');
-    return `<button class="filter-btn" data-proc="${p}" onclick="toggleProcess('${p}',this)">${label}</button>`;
-  }).join('');
-  bar.innerHTML=allBtn+procBtns;
+  bar.innerHTML=`<button class="filter-btn active" data-proc="ALL" onclick="toggleProcess('ALL',this)">All Processes</button>`
+    +procs.map(p=>`<button class="filter-btn" data-proc="${p}" onclick="toggleProcess('${p}',this)">${p.replace('TMF_','TMF ')}</button>`).join('');
   ACTIVE_PROCS=new Set(['ALL']);
 }
 
 function toggleProcess(proc, btn){
   if(proc==='ALL'){
-    // ALL resets everything
     ACTIVE_PROCS=new Set(['ALL']);
-    document.querySelectorAll('.filter-btn').forEach(b=>{
-      b.classList.toggle('active', b.dataset.proc==='ALL');
-    });
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.proc==='ALL'));
   } else {
-    // Remove ALL if selecting specific
     ACTIVE_PROCS.delete('ALL');
     document.querySelector('[data-proc="ALL"]').classList.remove('active');
-    // Toggle this process
     if(ACTIVE_PROCS.has(proc)){
-      ACTIVE_PROCS.delete(proc);
-      btn.classList.remove('active');
-      // If nothing selected, revert to ALL
-      if(ACTIVE_PROCS.size===0){
-        ACTIVE_PROCS=new Set(['ALL']);
-        document.querySelector('[data-proc="ALL"]').classList.add('active');
-      }
+      ACTIVE_PROCS.delete(proc); btn.classList.remove('active');
+      if(ACTIVE_PROCS.size===0){ ACTIVE_PROCS=new Set(['ALL']); document.querySelector('[data-proc="ALL"]').classList.add('active'); }
     } else {
-      ACTIVE_PROCS.add(proc);
-      btn.classList.add('active');
+      ACTIVE_PROCS.add(proc); btn.classList.add('active');
     }
   }
   applyFilters();
@@ -364,89 +428,82 @@ function getFiltered(){
     const procMatch=ACTIVE_PROCS.has('ALL')||ACTIVE_PROCS.has(pf)||ACTIVE_PROCS.has(a.process);
     const nameMatch=a.name.toLowerCase().includes(q)||a.agent_id.toLowerCase().includes(q);
     const f=getFlags(a);
-    const flagMatch=!ONLY_FLAGGED||(f.needsAttention||f.calls||f.TB||f.LB||f.RRB||f.PD||f.OB);
+    const flagMatch=!ONLY_FLAGGED||(f.needsAttention||f.calls||f.TB||f.LB||f.RRB||f.PD||f.OB||f.connFlag);
     return procMatch&&nameMatch&&flagMatch;
   }).sort((a,b)=>b.total_calls-a.total_calls);
 }
 
-function renderAll(){
-  const data=getFiltered();
-  buildKPI(data);
-  buildAlerts(data);
-  buildFlagSummary(data);
-  buildTable(data);
-  document.getElementById('shownCount').textContent=`${data.length} agents`;
-}
-
-function applyFilters(){renderAll();}
+function renderAll(){ const d=getFiltered(); buildKPI(d); buildAlerts(d); buildFlagSummary(d); buildTable(d); document.getElementById('shownCount').textContent=`${d.length} agents`; }
+function applyFilters(){ updateTimeUI(); renderAll(); }
 
 function buildKPI(data){
   const tot=data.reduce((s,a)=>s+a.total_calls,0);
   const conn=data.reduce((s,a)=>s+a.connected,0);
   const connRate=tot>0?Math.round(conn/tot*100):0;
+  const callTarget=getCallTarget();
   const alerts=data.filter(a=>getFlags(a).needsAttention).length;
   const flagCalls=data.filter(a=>getFlags(a).calls).length;
   const flagBreak=data.filter(a=>{const f=getFlags(a);return f.TB||f.LB||f.RRB||f.PD;}).length;
-  const totalTalkSec=data.reduce((s,a)=>s+toSec(a.talk_time),0);
-  const avgTalk=data.length>0?totalTalkSec/data.length:0;
+  const flagConn=data.filter(a=>getFlags(a).connFlag).length;
+  const avgTalk=data.length>0?data.reduce((s,a)=>s+toSec(a.talk_time),0)/data.length:0;
   const hh=Math.floor(avgTalk/3600),mm=Math.floor((avgTalk%3600)/60);
-  const avgTalkStr=`${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
   document.getElementById('kpiRow').innerHTML=`
     <div class="kpi"><div class="lbl">Total Calls</div><div class="val blue">${tot.toLocaleString()}</div><div class="sub">${data.length} active agents</div></div>
-    <div class="kpi"><div class="lbl">Connected</div><div class="val green">${conn.toLocaleString()}</div><div class="sub">${connRate}% connection rate</div></div>
-    <div class="kpi"><div class="lbl">Avg Talk Time</div><div class="val purple">${avgTalkStr}</div><div class="sub">Per agent</div></div>
-    <div class="kpi"><div class="lbl">Calls &lt;150</div><div class="val ${flagCalls>0?'red':'green'}">${flagCalls}</div><div class="sub">Below target</div></div>
+    <div class="kpi"><div class="lbl">Connected</div><div class="val green">${conn.toLocaleString()}</div><div class="sub">${connRate}% overall rate</div></div>
+    <div class="kpi ${flagConn>0?'alert-kpi':''}"><div class="lbl">Conn. Rate &lt;50%</div><div class="val ${flagConn>0?'red':'green'}">${flagConn}</div><div class="sub">Agents below 50%</div></div>
+    <div class="kpi"><div class="lbl">Avg Talk Time</div><div class="val purple">${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}</div><div class="sub">Per agent</div></div>
+    <div class="kpi"><div class="lbl">Calls &lt;${callTarget}</div><div class="val ${flagCalls>0?'red':'green'}">${flagCalls}</div><div class="sub">Below current target</div></div>
     <div class="kpi"><div class="lbl">Break Alerts</div><div class="val ${flagBreak>0?'red':'green'}">${flagBreak}</div><div class="sub">TB / LB / RRB / PD</div></div>
-    <div class="kpi ${alerts>0?'alert-kpi':''}"><div class="lbl">Prod. Alerts</div><div class="val ${alerts>0?'red':'green'}">${alerts}</div><div class="sub">Low prod / High breaks</div></div>
+    <div class="kpi ${alerts>0?'alert-kpi':''}"><div class="lbl">Prod. Alerts</div><div class="val ${alerts>0?'red':'green'}">${alerts}</div><div class="sub">Low prod / Breaks</div></div>
     <div class="kpi"><div class="lbl">Active Agents</div><div class="val neutral">${data.length}</div><div class="sub">0-call agents hidden</div></div>`;
 }
 
 function buildAlerts(data){
   const banner=document.getElementById('alertBanner');
-  const pills=document.getElementById('alertPills');
   const section=document.getElementById('alertsSection');
-  const grid=document.getElementById('alertsGrid');
   const alertAgents=data.filter(a=>getFlags(a).needsAttention);
   if(!alertAgents.length){banner.classList.remove('show');section.classList.remove('show');return;}
   banner.classList.add('show');
-  pills.innerHTML=alertAgents.slice(0,10).map(a=>{
+  document.getElementById('alertPills').innerHTML=alertAgents.slice(0,10).map(a=>{
     const f=getFlags(a);
     return `<span class="alert-pill ${f.prodLow?'':'amber'}">${f.prodLow?'🔴':'🟡'} ${a.name}</span>`;
   }).join('')+(alertAgents.length>10?`<span class="alert-pill">+${alertAgents.length-10} more</span>`:'');
   section.classList.add('show');
-  grid.innerHTML=alertAgents.map(a=>{
+  document.getElementById('alertsGrid').innerHTML=alertAgents.map(a=>{
     const f=getFlags(a);
-    const reasons=[];
-    if(f.prodLow)reasons.push('<span class="alert-tag prod">📉 Productivity Low</span>');
-    if(f.calls)reasons.push('<span class="alert-tag prod">📞 Calls &lt;150</span>');
-    if(f.breaksHigh)reasons.push('<span class="alert-tag break">⏱ Breaks High</span>');
-    if(f.talkLow)reasons.push('<span class="alert-tag prod">🎙 Talk Time Low</span>');
-    if(f.PD)reasons.push('<span class="alert-tag break">PD ≥2h</span>');
-    if(f.TB)reasons.push('<span class="alert-tag break">TB &gt;30m</span>');
-    if(f.LB)reasons.push('<span class="alert-tag break">LB &gt;30m</span>');
-    if(f.RRB)reasons.push('<span class="alert-tag break">RRB &gt;10m</span>');
-    const procFull=a.process_full||a.process||'';
-    return `<div class="alert-card">
-      <div class="alert-agent">${a.name} <span style="font-size:10px;color:var(--muted);font-weight:400">${procFull.replace('TMF_','')}</span></div>
-      <div class="alert-reasons">${reasons.join('')}</div>
-    </div>`;
+    const r=[];
+    if(f.prodLow) r.push('<span class="alert-tag prod">📉 Productivity Low</span>');
+    if(f.calls) r.push(`<span class="alert-tag prod">📞 Calls &lt;${getCallTarget()}</span>`);
+    if(f.connFlag) r.push('<span class="alert-tag prod">📡 Conn &lt;50%</span>');
+    if(f.breaksHigh) r.push('<span class="alert-tag break">⏱ Breaks High</span>');
+    if(f.talkLow) r.push('<span class="alert-tag prod">🎙 Talk Low</span>');
+    if(f.TB) r.push('<span class="alert-tag break">TB exceeded</span>');
+    if(f.LB) r.push('<span class="alert-tag break">LB &gt;30m</span>');
+    if(f.RRB) r.push('<span class="alert-tag break">RRB &gt;10m</span>');
+    if(f.PD) r.push('<span class="alert-tag break">PD ≥2h</span>');
+    const pf=(a.process_full||a.process||'').replace('TMF_','');
+    return `<div class="alert-card"><div class="alert-agent">${a.name} <span style="font-size:10px;color:var(--muted);font-weight:400">${pf}</span></div><div class="alert-reasons">${r.join('')}</div></div>`;
   }).join('');
 }
 
 function buildFlagSummary(data){
+  const callTarget=getCallTarget();
+  const tbLimit=getTBLimit();
+  const tbLbl=tbLimit===15*60?'TB>15m':'TB>30m';
   const tbF=data.filter(a=>getFlags(a).TB).length;
   const lbF=data.filter(a=>getFlags(a).LB).length;
   const rrbF=data.filter(a=>getFlags(a).RRB).length;
   const pdF=data.filter(a=>getFlags(a).PD).length;
   const obF=data.filter(a=>getFlags(a).OB).length;
   const callF=data.filter(a=>getFlags(a).calls).length;
+  const connF=data.filter(a=>getFlags(a).connFlag).length;
   const prodF=data.filter(a=>getFlags(a).prodLow).length;
   const chip=(lbl,n,cls='bad')=>n>0?`<span class="chip ${cls}">⚠ ${lbl}: ${n}</span>`:`<span class="chip ok">✓ ${lbl}</span>`;
   document.getElementById('flagSummary').innerHTML=`
-    ${chip('TB>30m',tbF)}${chip('LB>30m',lbF)}${chip('RRB>10m',rrbF)}${chip('PD≥2h',pdF)}
-    ${obF>0?`<span class="chip warn">⚠ OB≥PD: ${obF}</span>`:`<span class="chip ok">✓ Outbound OK</span>`}
-    ${chip('Calls<150',callF)}
-    ${prodF>0?`<span class="chip bad">🚨 Low Prod: ${prodF}</span>`:`<span class="chip ok">✓ Productivity OK</span>`}`;
+    ${chip(tbLbl,tbF)}${chip('LB>30m',lbF)}${chip('RRB>10m',rrbF)}${chip('PD≥2h',pdF)}
+    ${obF>0?`<span class="chip warn">⚠ OB≥PD: ${obF}</span>`:`<span class="chip ok">✓ Outbound</span>`}
+    ${chip(`Calls<${callTarget}`,callF)}${chip('Conn<50%',connF)}
+    ${prodF>0?`<span class="chip bad">🚨 Low Prod: ${prodF}</span>`:`<span class="chip ok">✓ Productivity</span>`}`;
 }
 
 function buildTable(data){
@@ -455,19 +512,20 @@ function buildTable(data){
   data.forEach((a,i)=>{
     const f=getFlags(a);
     const rank=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);
-    const procFull=a.process_full||a.process||'';
-    const isKL=procFull.includes('Kerala');
-    const isTN=procFull.includes('Tamilnadu')||procFull.includes('Tamil');
+    const pf=a.process_full||a.process||'';
+    const isKL=pf.includes('Kerala'), isTN=pf.includes('Tamilnadu')||pf.includes('Tamil');
     const procCls=isKL?'proc-kl':isTN?'proc-tn':'proc-other';
-    const procTag=`<span class="proc-tag ${procCls}">${procFull.replace('TMF_','TMF ')}</span>`;
+    const procTag=`<span class="proc-tag ${procCls}">${pf.replace('TMF_','TMF ')}</span>`;
     const prodBadge=f.prodLow?'<span class="prod-badge">🚨 Low Prod</span>':'';
-    const breakBadge=f.breaksHigh&&!f.prodLow?'<span class="ob-badge">⚠ Breaks</span>':'';
+    const breakBadge=f.breaksHigh&&!f.prodLow?'<span class="break-badge">⚠ Breaks</span>':'';
     const obBadge=f.OB?'<span class="ob-badge">≥PD</span>':'';
+    const connRate=a.total_calls>0?a.connected/a.total_calls*100:0;
+    const connRateCls=f.connFlag?'conn-rate red':'conn-rate ok';
     const talkCls=f.talkLow?'tc talk low':'tc talk';
     const idleCls=f.idleHigh?'tc idle-hi':'tc ok';
     const tr=document.createElement('tr');
-    if(f.needsAttention)tr.classList.add('prod-alert');
-    tr.dataset.name=(a.name+' '+procFull).toLowerCase();
+    if(f.needsAttention) tr.classList.add('prod-alert');
+    tr.dataset.name=(a.name+' '+pf).toLowerCase();
     tr.innerHTML=`
       <td class="rank">${rank}</td>
       <td class="name-cell left">${a.name}${prodBadge}${breakBadge}</td>
@@ -475,6 +533,7 @@ function buildTable(data){
       <td class="calls div-l ${f.calls?'red':'grn'}">${a.total_calls}</td>
       <td><span class="conn">${a.connected}</span></td>
       <td><span class="nconn">${a.not_connected}</span></td>
+      <td class="${connRateCls}">${fmtPct(connRate)}</td>
       <td class="tc div-l ok">${fmtT(a.logged_in)}</td>
       <td class="${talkCls}">${fmtT(a.talk_time)}</td>
       <td class="${idleCls}">${fmtT(a.idle_time)}</td>
@@ -488,7 +547,10 @@ function buildTable(data){
   });
 }
 
-setInterval(loadData,5*60*1000);
+// Update time every minute
+setInterval(()=>{ updateTimeUI(); if(ALL_DATA.length) renderAll(); }, 60*1000);
+setInterval(loadData, 5*60*1000);
+updateTimeUI();
 loadData();
 </script>
 </body>
