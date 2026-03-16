@@ -157,6 +157,16 @@ td.div-l{border-left:1px solid #e9ecef;}
 .load-text{color:var(--muted);font-size:13px;}
 #errorState{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:12px;}
 
+@keyframes raceBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes raceSpinBounce{0%,100%{transform:rotate(-10deg) scale(1)}25%{transform:rotate(10deg) scale(1.15)}50%{transform:rotate(-10deg) scale(1)}75%{transform:rotate(10deg) scale(1.1)}}
+@keyframes confFall{0%{transform:translateY(-10px) rotate(0);opacity:1}100%{transform:translateY(40px) rotate(360deg);opacity:0}}
+.race-track{position:relative;height:46px;margin-bottom:6px;border-radius:8px;background:#16213e;border:1px solid #0f3460;overflow:hidden;}
+.race-track-line{position:absolute;top:50%;left:0;right:0;height:1px;background:repeating-linear-gradient(90deg,#ffffff18 0,#ffffff18 8px,transparent 8px,transparent 16px);}
+.race-track-fill{position:absolute;top:0;left:0;height:100%;border-radius:8px 0 0 8px;transition:width 1.4s cubic-bezier(.34,1.56,.64,1);opacity:.2;}
+.race-car-group{position:absolute;top:50%;transform:translateY(-50%);transition:left 1.4s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;gap:6px;left:8%;}
+.race-rank{position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:14px;width:26px;text-align:center;}
+.race-finish{position:absolute;right:0;top:0;bottom:0;width:10px;background:repeating-linear-gradient(180deg,#fff 0,#fff 5px,#111 5px,#111 10px);opacity:.5;border-radius:0 8px 8px 0;}
+.conf-dot{position:absolute;width:6px;height:6px;border-radius:1px;animation:confFall 2s ease-in infinite;}
 @media(max-width:1100px){.kpi-row{grid-template-columns:repeat(4,1fr);}}
 @media(max-width:600px){.kpi-row{grid-template-columns:repeat(2,1fr);}}
 </style>
@@ -228,6 +238,34 @@ td.div-l{border-left:1px solid #e9ecef;}
     <div class="alerts-section" id="alertsSection">
       <div class="alerts-sec-title">🚨 Agents Needing Attention</div>
       <div class="alerts-grid" id="alertsGrid"></div>
+    </div>
+
+    <!-- PRODUCTIVITY RACE -->
+    <div class="sec">🏆 Productivity Race</div>
+    <div style="background:#1a1a2e;border-radius:12px;padding:16px;margin-bottom:16px;overflow:hidden;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <span style="font-size:18px;display:inline-block;animation:raceBounce 1s ease-in-out infinite;">🏆</span>
+        <span style="color:#fff;font-size:13px;font-weight:600;">Live Productivity Race</span>
+        <span style="margin-left:auto;font-size:10px;color:#64748b;">cars move based on call count</span>
+      </div>
+      <div id="raceTracks"></div>
+      <div id="raceWinner" style="background:#16213e;border:1px solid #f0c040;border-radius:10px;padding:12px 16px;margin-top:10px;display:flex;align-items:center;gap:14px;">
+        <div style="font-size:28px;animation:raceSpinBounce 2s ease-in-out infinite;">🏆</div>
+        <div style="flex:1;">
+          <div style="font-size:10px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.7px;margin-bottom:2px;">Top Performer</div>
+          <div id="raceWinnerName" style="font-size:15px;font-weight:700;color:#f0c040;">–</div>
+          <div id="raceWinnerSub" style="font-size:11px;color:#94a3b8;margin-top:2px;">–</div>
+        </div>
+        <div style="text-align:right;">
+          <div id="raceWinnerCalls" style="font-size:24px;font-weight:700;color:#f0c040;font-family:'JetBrains Mono',monospace;">–</div>
+          <div style="font-size:10px;color:#94a3b8;margin-top:1px;">calls today</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button onclick="setRaceView('top5',this)" id="raceBtn5" style="background:#1d6ae5;border:1px solid #3b82f6;color:#fff;padding:5px 12px;border-radius:20px;cursor:pointer;font-size:11px;font-weight:600;font-family:'Inter',sans-serif;">Top 5</button>
+        <button onclick="setRaceView('top10',this)" id="raceBtn10" style="background:#0f3460;border:1px solid #1d6ae5;color:#93c5fd;padding:5px 12px;border-radius:20px;cursor:pointer;font-size:11px;font-weight:600;font-family:'Inter',sans-serif;">Top 10</button>
+        <button onclick="setRaceView('all',this)" id="raceBtnAll" style="background:#0f3460;border:1px solid #1d6ae5;color:#93c5fd;padding:5px 12px;border-radius:20px;cursor:pointer;font-size:11px;font-weight:600;font-family:'Inter',sans-serif;">All Agents</button>
+      </div>
     </div>
 
     <div class="sec">Agent Performance Table</div>
@@ -433,7 +471,7 @@ function getFiltered(){
   }).sort((a,b)=>b.total_calls-a.total_calls);
 }
 
-function renderAll(){ const d=getFiltered(); buildKPI(d); buildAlerts(d); buildFlagSummary(d); buildTable(d); document.getElementById('shownCount').textContent=`${d.length} agents`; }
+function renderAll(){ const d=getFiltered(); buildKPI(d); buildAlerts(d); buildFlagSummary(d); buildRace(d); buildTable(d); document.getElementById('shownCount').textContent=`${d.length} agents`; }
 function applyFilters(){ updateTimeUI(); renderAll(); }
 
 function buildKPI(data){
@@ -545,6 +583,85 @@ function buildTable(data){
       <td class="tc div-l ${f.OB?'warn':'ok'}">${fmtT(a.OUTBOUND)}${obBadge}</td>`;
     tbody.appendChild(tr);
   });
+}
+
+// ── RACE ANIMATION ──
+const RACE_COLORS=['#e74c3c','#3498db','#2ecc71','#f39c12','#9b59b6','#1abc9c','#e67e22','#e91e63','#00bcd4','#8bc34a'];
+const MEDALS=['🥇','🥈','🥉'];
+let RACE_VIEW='top5';
+
+function carSVG(color){
+  return `<svg width="36" height="18" viewBox="0 0 60 26" xmlns="http://www.w3.org/2000/svg">
+    <rect x="4" y="10" width="52" height="12" rx="4" fill="${color}"/>
+    <path d="M14 10 L20 2 L40 2 L46 10Z" fill="${color}" opacity=".85"/>
+    <rect x="8" y="14" width="8" height="4" rx="1" fill="#fff" opacity=".3"/>
+    <rect x="44" y="14" width="8" height="4" rx="1" fill="#fff" opacity=".3"/>
+    <circle cx="14" cy="22" r="5" fill="#222"/><circle cx="14" cy="22" r="3" fill="#555"/><circle cx="14" cy="22" r="1.5" fill="#888"/>
+    <circle cx="46" cy="22" r="5" fill="#222"/><circle cx="46" cy="22" r="3" fill="#555"/><circle cx="46" cy="22" r="1.5" fill="#888"/>
+    <rect x="48" y="12" width="2" height="6" rx="1" fill="#ff4444" opacity=".8"/>
+  </svg>`;
+}
+
+function buildRace(data){
+  const sorted=[...data].sort((a,b)=>b.total_calls-a.total_calls).filter(a=>a.total_calls>0);
+  const show=RACE_VIEW==='top5'?5:RACE_VIEW==='top10'?10:sorted.length;
+  const visible=sorted.slice(0,show);
+  const tracks=document.getElementById('raceTracks');
+  if(!tracks) return;
+  if(!visible.length){tracks.innerHTML='<div style="color:#64748b;font-size:12px;padding:20px;text-align:center;">Upload CSV to see race</div>';return;}
+  const maxCalls=visible[0].total_calls||1;
+  const target=getCallTarget();
+
+  tracks.innerHTML=visible.map((a,i)=>{
+    const color=RACE_COLORS[i%RACE_COLORS.length];
+    const pct=Math.min((a.total_calls/Math.max(maxCalls,target))*80,80);
+    const connRate=a.total_calls>0?Math.round(a.connected/a.total_calls*100):0;
+    const medal=i<3?MEDALS[i]:`<span style="font-size:11px;color:#475569">${i+1}</span>`;
+    return `<div class="race-track">
+      <div class="race-track-line"></div>
+      <div class="race-track-fill" id="rfill${i}" style="background:${color};width:0%"></div>
+      <div class="race-rank">${medal}</div>
+      <div class="race-car-group" id="rcar${i}" style="left:8%">
+        ${carSVG(color)}
+        <div>
+          <div style="font-size:11px;font-weight:600;color:#fff;white-space:nowrap;">${a.name.split(' ')[0]}</div>
+          <div style="font-size:10px;padding:1px 6px;border-radius:10px;font-weight:700;color:#fff;background:${color}88;white-space:nowrap;">${a.total_calls} calls · ${connRate}%</div>
+        </div>
+      </div>
+      <div class="race-finish"></div>
+    </div>`;
+  }).join('');
+
+  // Animate after paint
+  setTimeout(()=>{
+    visible.forEach((a,i)=>{
+      const pct=Math.min((a.total_calls/Math.max(maxCalls,target))*80,80);
+      const carEl=document.getElementById(`rcar${i}`);
+      const fillEl=document.getElementById(`rfill${i}`);
+      if(carEl) carEl.style.left=Math.max(pct,8)+'%';
+      if(fillEl) fillEl.style.width=pct+'%';
+    });
+  },150);
+
+  // Winner display
+  const winner=visible[0];
+  const connR=winner.total_calls>0?Math.round(winner.connected/winner.total_calls*100):0;
+  const wnEl=document.getElementById('raceWinnerName');
+  const wsEl=document.getElementById('raceWinnerSub');
+  const wcEl=document.getElementById('raceWinnerCalls');
+  if(wnEl) wnEl.textContent=winner.name;
+  if(wsEl) wsEl.textContent=`${connR}% connection rate · ${(winner.process_full||winner.process||'').replace('TMF_','')}`;
+  if(wcEl) wcEl.textContent=winner.total_calls;
+}
+
+function setRaceView(v,btn){
+  RACE_VIEW=v;
+  ['raceBtn5','raceBtn10','raceBtnAll'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){el.style.background='#0f3460';el.style.color='#93c5fd';}
+  });
+  if(btn){btn.style.background='#1d6ae5';btn.style.color='#fff';}
+  buildRace(ALL_DATA);
 }
 
 // Update time every minute
